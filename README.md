@@ -1,6 +1,8 @@
 # MyTimeTool
 My Simple TimeTool Application for better time management
 
-[[ux-proto1.pnb]]
+# User interface Prototype
+
+<img src="ux-proto1.png">
 
 -- TommiRintala
