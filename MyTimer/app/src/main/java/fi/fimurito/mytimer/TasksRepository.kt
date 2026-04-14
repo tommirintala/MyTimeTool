@@ -1,6 +1,7 @@
 package fi.fimurito.mytimer
 
 import androidx.work.ListenableWorker
+import fi.fimurito.mytimer.data.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.sync.Mutex

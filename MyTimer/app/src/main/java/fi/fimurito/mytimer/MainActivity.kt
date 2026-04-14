@@ -225,7 +225,8 @@ fun TaskSwitcher() {
         }
 
         Row(verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth(1f)
         ) {
             Button(
                 modifier = Modifier.fillMaxWidth(1f),
