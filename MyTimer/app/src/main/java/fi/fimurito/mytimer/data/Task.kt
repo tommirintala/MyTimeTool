@@ -10,7 +10,7 @@ import java.util.Date
 @Serializable
 @Entity
 data class Task(
-    @PrimaryKey private val id: Long?,
+    @PrimaryKey private val id: Long? = null,
     @ColumnInfo val remoteId: Long = 0L,
     @ColumnInfo(name="code") val code: String = "",
     @ColumnInfo(name="abbr") val abbr: String = "",

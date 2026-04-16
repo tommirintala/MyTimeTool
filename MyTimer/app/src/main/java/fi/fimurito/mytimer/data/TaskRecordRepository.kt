@@ -1,6 +1,7 @@
 package fi.fimurito.mytimer.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 import java.util.Date
 
 class TaskRecordRepository(private val dao: TaskRecordDao) {
@@ -40,6 +41,9 @@ class TaskRecordRepository(private val dao: TaskRecordDao) {
     }
 
     suspend fun deleteAll() {
-        dao.deleteAll()
+        val flow = dao.getAll()
+        flow.collect {
+            list -> list.forEach { dao.delete( it ) }
+        }
     }
 }
