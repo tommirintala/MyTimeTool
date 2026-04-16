@@ -10,7 +10,8 @@ import java.util.Date
 @Serializable
 @Entity
 data class Task(
-    @PrimaryKey val id: Long = Long.MIN_VALUE,
+    @PrimaryKey private val id: Long?,
+    @ColumnInfo val remoteId: Long = 0L,
     @ColumnInfo(name="code") val code: String = "",
     @ColumnInfo(name="abbr") val abbr: String = "",
     @ColumnInfo(name="title") val title: String = "Task",
@@ -18,4 +19,9 @@ data class Task(
     @ColumnInfo(name="modified_at") val modificationTime: Date = Date(),
     @ColumnInfo(name="beginTime") val beginTime: Date = Date(),
     @ColumnInfo(name="endTime") val endTime: Date = Date()
-)
+) {
+    fun getId(): Long? {
+        return id
+    }
+
+}

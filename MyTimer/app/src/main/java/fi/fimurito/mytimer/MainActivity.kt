@@ -48,11 +48,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fi.fimurito.mytimer.data.Task
 import fi.fimurito.mytimer.ui.theme.MyTimerTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -61,6 +64,8 @@ import kotlinx.coroutines.flow.StateFlow
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
 
+    private val _lastTask = MutableLiveData<Task>()
+    val lastTask: LiveData<Task> = _lastTask
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

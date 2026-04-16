@@ -1,26 +1,42 @@
 package fi.fimurito.mytimer
 
-import androidx.core.content.ContextCompat.getString
-import androidx.room.Room
-import fi.fimurito.mytimer.data.TaskDatabase
-import fi.fimurito.mytimer.data.Task
-import org.junit.Test
+//import androidx.core.content.ContextCompat.getString
 
+import app.cash.turbine.test
+import app.cash.turbine.awaitItem
 import kotlin.collections.emptyList
 
-import android.content.Context
-import fi.fimurito.mytimer.data.TaskDao
-import org.bouncycastle.util.test.SimpleTest.runTest
+
+// import org.junit.Test
+//import org.junit.Rule
+import org.junit.Test
 import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
+//import org.junit.Assert.assertEquals
+//import org.junit.jupiter.api.Test
+
+
+import android.content.Context
+import androidx.room.Room
+
+import kotlinx.coroutines.test.runTest
+//import org.bouncycastle.util.test.SimpleTest.runTest
+
+//import org.mockito.Mock
+//import org.mockito.junit.MockitoJUnitRunner
+//import org.mockito.kotlin.doReturn
+//import org.mockito.kotlin.mock
+
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 
+import io.kotlintest.shouldBe
+
+
+import fi.fimurito.mytimer.data.TaskDatabase
+import fi.fimurito.mytimer.data.Task
+import fi.fimurito.mytimer.data.TaskDao
 
 
 private const val FAKE_CONTEXT = "FakeContext"
@@ -49,10 +65,11 @@ class TaskDBTest {
     }
 
     @Test
-    fun `verify inserting data flow`() = runTest {
-        val items = (0 until 4).map { id ->
+    fun test1() = runTest {
+        val items = (0L until 4L).map { id ->
             Task(
-                id = $id,
+                id = id,
+                remoteId = id + 100L,
                 title = "title_$id",
                 code = "code_$id",
                 abbr = "abbr_$id",
@@ -66,11 +83,16 @@ class TaskDBTest {
             awaitItem() shouldBe listOf(items[0])
 
             subject.insertAll(items[1])
-            awaitItem() shouldBe listOf(items[0], items[1])
+            awaitItem() shouldBe listOf(
+                items[0],
+                items[1])
 
             subject.insertAll(items[2], items[3])
-            awaitItem() shouldBe listOf(items[0], items[1],
-                items[2], items[3])
+            awaitItem() shouldBe listOf(
+                items[0],
+                items[1],
+                items[2],
+                items[3])
 
             cancelAndConsumeRemainingEvents() shouldBe emptyList()
         }

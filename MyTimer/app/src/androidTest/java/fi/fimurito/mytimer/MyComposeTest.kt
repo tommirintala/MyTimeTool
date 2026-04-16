@@ -1,11 +1,10 @@
 package fi.fimurito.mytimer
 
 import app.cash.turbine.test
+import app.cash.turbine.awaitItem
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import fi.fimurito.mytimer.ui.theme.MyTimerTheme
+
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -34,7 +33,7 @@ class MyComposeTest {
             assertEquals(true, result.isLoading)
             assertEquals("Fake Data", result.data)
 
-            cancelAndIgnoreRemaininEvents()
+            cancelAndIgnoreRemainingEvents()
         }
         /*
         composeTestRule.setContent {
