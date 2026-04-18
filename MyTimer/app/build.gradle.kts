@@ -58,9 +58,6 @@ android {
     //kotlinOptions {
     //    freeCompilerArgs = listOf("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
     //}
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
 
     testOptions {
         packaging {
@@ -70,6 +67,9 @@ android {
 
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
 
 
 dependencies {
