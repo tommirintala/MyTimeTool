@@ -8,21 +8,21 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM task")
+    @Query("SELECT * FROM tasks")
     fun getAll(): Flow<List<Task>>
 
-    @Query("SELECT * FROM task WHERE id IN (:ids)")
+    @Query("SELECT * FROM tasks WHERE id IN (:ids)")
     fun loadAllByIds(ids: IntArray): Flow<List<Task>>
 
     @Insert
     fun insertAll(vararg tasks: Task)
 
-    @Query("SELECT * FROM task ORDER BY created_at DESC LIMIT 1")
+    @Query("SELECT * FROM tasks ORDER BY created_at DESC LIMIT 1")
     fun getLastTask(): Task
 
-    @Query("SELECT * FROM task WHERE title LIKE ':name'")
-    fun findTask(name: String)
+    @Query("SELECT * FROM tasks WHERE title LIKE :name")
+    fun findTask(name: String): Flow<List<Task>>
 
     @Delete
-    fun delete(task: Task)
+    fun delete(task: Task): Int
 }

@@ -8,18 +8,18 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface TaskRecordDao {
-    @Query("SELECT * FROM taskrecord")
-    fun getAll(): Flow<List<TaskRecord>>
+interface TaskLogDao {
+    @Query("SELECT * FROM tasklogs")
+    fun getAll(): Flow<List<TaskLog>>
 
     @Insert
-    fun insertAll(vararg taskRecord: TaskRecord)
+    fun insertAll(vararg taskLog: TaskLog)
 
     @Update
-    fun updateTaskRecord(vararg taskRecord: TaskRecord)
+    fun updateTaskLog(vararg taskLog: TaskLog)
 
     @Delete
-    fun delete(taskRecord: TaskRecord)
+    fun delete(taskLog: TaskLog)
 
     //@Delete
     //fun deleteAll()

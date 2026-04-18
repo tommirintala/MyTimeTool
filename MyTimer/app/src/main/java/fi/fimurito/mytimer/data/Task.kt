@@ -1,14 +1,14 @@
 package fi.fimurito.mytimer.data
 
+// import kotlinx.serialization.Serializable
 import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
 import androidx.room.Entity
-import kotlinx.serialization.Serializable
+import androidx.room.PrimaryKey
 import java.util.Date
 
 
-@Serializable
-@Entity
+// @Serializable
+@Entity(tableName = "tasks")
 data class Task(
     @PrimaryKey private val id: Long? = null,
     @ColumnInfo val remoteId: Long = 0L,
@@ -17,8 +17,8 @@ data class Task(
     @ColumnInfo(name="title") val title: String = "Task",
     @ColumnInfo(name="created_at") val creationTime: Date = Date(),
     @ColumnInfo(name="modified_at") val modificationTime: Date = Date(),
-    @ColumnInfo(name="beginTime") val beginTime: Date = Date(),
-    @ColumnInfo(name="endTime") val endTime: Date = Date()
+    @ColumnInfo(name="beginTime") val beginTime: Date? = null,
+    @ColumnInfo(name="endTime") val endTime: Date? = null,
 ) {
     fun getId(): Long? {
         return id

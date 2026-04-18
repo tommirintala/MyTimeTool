@@ -1,12 +1,14 @@
 package fi.fimurito.mytimer
 
-import androidx.core.content.ContextCompat.getString
-import androidx.room.Room
+
 import fi.fimurito.mytimer.data.Task
-import fi.fimurito.mytimer.data.TaskDatabase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
+
+// import org.junit.jupiter.api.Assertions.*
 
 class TaskTest {
     lateinit var task: Task
@@ -20,60 +22,60 @@ class TaskTest {
             code = "101",
         )
     }
-    @org.junit.jupiter.api.Test
+    @Test
     fun getIdTest() {
         val id = task.getId()
         assertNotNull(id)
         assertNotEquals(0L, task.getId())
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun getCodeTest() {
         assertEquals("101", task.code)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun getAbbrTest() {
         assertEquals("TSK1", task.abbr)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun getTitleTest() {
         assertEquals("Task #1", task.title)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun getCreationTimeTest() {
         assertNotNull(task.creationTime)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun getBeginTimeTest() {
         assertNotNull(task.beginTime)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun getEndTimeTest() {
         assertNotNull(task.endTime)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun copyTest() {
         val nn = task
-        assertSame(task, nn)
+        assertEquals(task, nn)
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun toStringTest() {
         assertNotNull(task.toString())
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun hashCodeTest() {
         assertNotNull(task.hashCode())
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     fun equalsTest() {
         val nn = task
         assertEquals(task, nn)

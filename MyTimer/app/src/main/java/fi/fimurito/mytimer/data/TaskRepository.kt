@@ -17,6 +17,8 @@ class TaskRepository(private val dao: TaskDao) {
             remoteId = rId,
             creationTime = cTime,
             modificationTime = mTime,
+            beginTime = null,
+            endTime = null,
         ))
     }
 

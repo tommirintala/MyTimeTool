@@ -1,29 +1,30 @@
 [versions]
-agp = "9.1.0"
+agp = "9.1.1"
 coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.8.0"
-kotlin = "2.2.10"
-composeBom = "2025.12.00"
-lifecycleViewmodelCompose = "2.8.4"
-uiTextGoogleFonts = "1.10.5"
+activityCompose = "1.13.0"
+kotlin = "2.3.20"
+composeBom = "2026.03.01"
+lifecycleViewmodelCompose = "2.10.0"
+uiTextGoogleFonts = "1.10.6"
 workRuntimeKtx = "2.11.2"
 datastorePreferences = "1.2.1"
 datastore = "1.2.1"
-orgJetbrainsKotlinPluginSerializationGradlePlugin = "2.2.0"
-kotlinxSerializationJson = "1.9.0"
-junitJupiter = "5.13.0-M3"
-mockitoKotlin = "5.4.0"
+orgJetbrainsKotlinPluginSerializationGradlePlugin = "2.3.20"
+kotlinxSerializationJson = "1.11.0"
+junitJupiter = "6.0.3"
+mockitoKotlin = "6.3.0"
 roomCompiler = "2.8.4"
 roomKtx = "2.8.4"
 robolectric = "4.16.1"
-turbine = "1.2.0"
 kotlinxCoroutinesTest = "1.10.2"
 turbineVersion = "1.2.1"
 kotlintestCore = "3.4.2"
+kspVersion = "2.3.6"
+sqliteBundled = "2.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,8 +57,13 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbineVersion" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 kotlintest-core = { group = "io.kotlintest", name = "kotlintest-core", version.ref = "kotlintestCore" }
+androidx-sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqliteBundled" }
+androidx-room-sqlite-wrapper = { module = "androidx.room:room-sqlite-wrapper", version.ref = "roomCompiler"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
+androidx-room = { id = "androidx.room", version.ref = "roomCompiler" }
+
 

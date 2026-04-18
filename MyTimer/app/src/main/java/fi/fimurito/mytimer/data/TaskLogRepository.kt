@@ -1,19 +1,18 @@
 package fi.fimurito.mytimer.data
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onEach
 import java.util.Date
 
-class TaskRecordRepository(private val dao: TaskRecordDao) {
-    suspend fun addNewTaskRecord(
+class TaskLogRepository(private val dao: TaskLogDao) {
+    suspend fun addNewTaskLog(
                            tId: Long, bTime: Date, eTime: Date,
-                           recordComment: String
+                           logComment: String
     ) {
-        dao.insertAll(TaskRecord(
+        dao.insertAll(TaskLog(
             taskId = tId,
             beginDate = bTime,
             endDate = eTime,
-            comment = recordComment
+            comment = logComment
         ))
     }
 
@@ -22,7 +21,7 @@ class TaskRecordRepository(private val dao: TaskRecordDao) {
     //}
 
     suspend fun commitTaskEntry(taskIdNum: Long, startTime: Date, endTime: Date, taskComment: String) {
-        dao.insertAll(TaskRecord(
+        dao.insertAll(TaskLog(
             taskId = taskIdNum,
             beginDate = startTime,
             endDate = endTime,
@@ -31,12 +30,12 @@ class TaskRecordRepository(private val dao: TaskRecordDao) {
         ))
     }
 
-    suspend fun updateTaskRecord(record: TaskRecord) {
+    suspend fun updateTaskLog(record: TaskLog) {
         record.modificationTime
-        dao.updateTaskRecord(record )
+        dao.updateTaskLog(record )
     }
 
-    suspend fun getAllTasks(): Flow<List<TaskRecord>> {
+    suspend fun getAllTasks(): Flow<List<TaskLog>> {
         return dao.getAll()
     }
 

@@ -1,6 +1,6 @@
 package fi.fimurito.mytimer
 
-import android.util.Log
+
 import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
