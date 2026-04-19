@@ -112,7 +112,7 @@ dependencies {
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.androidx.room.compiler)
     //testImplementation(libs.androidx.room.testing)
-
+    testImplementation(libs.mockito)
 
     androidTestImplementation(libs.turbine)
     androidTestImplementation(libs.junit)
@@ -125,6 +125,7 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.room.compiler)
+    androidTestImplementation(libs.mockito.android)
 
     debugImplementation(libs.turbine)
     debugImplementation(libs.junit)

@@ -7,6 +7,8 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDateTime
+import java.util.Date
 
 // import org.junit.jupiter.api.Assertions.*
 
@@ -20,6 +22,8 @@ class TaskTest {
             title = "Task #1",
             remoteId = -1L,
             code = "101",
+            beginTime = LocalDateTime.now(),
+            endTime = LocalDateTime.now().plusMinutes(15),
         )
     }
     @Test

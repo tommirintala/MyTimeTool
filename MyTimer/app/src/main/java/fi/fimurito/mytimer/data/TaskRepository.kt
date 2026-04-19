@@ -1,13 +1,14 @@
 package fi.fimurito.mytimer.data
 
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
+import java.time.LocalDateTime
+// import java.util.Date
 
 class TaskRepository(private val dao: TaskDao) {
     suspend fun addNewTask(rId: Long,
                            code: String, title: String,
                            abbreviation: String,
-                           cTime: Date, mTime: Date
+                           cTime: LocalDateTime, mTime: LocalDateTime
     ) {
         dao.insertAll(Task(
             id = null,

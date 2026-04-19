@@ -8,7 +8,7 @@ class DivbyTest {
     @Test
     fun divby_test() {
         for (i in 0..20) {
-            assertEquals( 0, divby(i, 5))
+            assertEquals( 0, divBy(i, 5))
         }
     }
 

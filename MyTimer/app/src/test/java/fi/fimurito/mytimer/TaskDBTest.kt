@@ -37,6 +37,7 @@ import io.kotlintest.shouldBe
 import fi.fimurito.mytimer.data.TaskDatabase
 import fi.fimurito.mytimer.data.Task
 import fi.fimurito.mytimer.data.TaskDao
+import java.time.LocalDateTime
 
 
 private const val FAKE_CONTEXT = "FakeContext"
@@ -65,7 +66,7 @@ class TaskDBTest {
     }
 
     @Test
-    fun test1() = runTest {
+    fun `TaskDBTest testing basic DB operations`() = runTest {
         val items = (0L until 4L).map { id ->
             Task(
                 id = id,
@@ -73,6 +74,8 @@ class TaskDBTest {
                 title = "title_$id",
                 code = "code_$id",
                 abbr = "abbr_$id",
+                beginTime = LocalDateTime.now(),
+                endTime = LocalDateTime.now().plusMinutes(AppConstants.CURRENT_MINUTE_DIVISOR.toLong()),
             )
         }
 

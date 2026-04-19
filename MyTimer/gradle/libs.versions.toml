@@ -25,6 +25,7 @@ turbineVersion = "1.2.1"
 kotlintestCore = "3.4.2"
 kspVersion = "2.3.6"
 sqliteBundled = "2.6.2"
+mockito = "5.23.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -59,6 +60,8 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlintest-core = { group = "io.kotlintest", name = "kotlintest-core", version.ref = "kotlintestCore" }
 androidx-sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", version.ref = "sqliteBundled" }
 androidx-room-sqlite-wrapper = { module = "androidx.room:room-sqlite-wrapper", version.ref = "roomCompiler"}
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockito"}
+mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockito"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

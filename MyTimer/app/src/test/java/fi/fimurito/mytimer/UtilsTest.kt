@@ -4,14 +4,14 @@ package fi.fimurito.mytimer
 import junit.framework.TestCase.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 class UtilsTest {
     @Test
     fun testTaskTimer() {
-        val n = LocalDateTime.now()
+        val n = ZonedDateTime.now()
         val t = Utils.taskTimer()
-        var m: Int = n.minute - n.minute % AppConstants.CURRENT_MINUTE_DIVISOR
+        val m: Int = n.minute - n.minute % AppConstants.CURRENT_MINUTE_DIVISOR
 
         // Log.d(AppConstants.LOG_TAG, "time: ${t.hour}:${t.minute}:${t.second}")
 

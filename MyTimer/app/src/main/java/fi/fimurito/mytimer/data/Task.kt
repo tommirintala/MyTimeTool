@@ -4,7 +4,8 @@ package fi.fimurito.mytimer.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
+import java.time.LocalDateTime
+// import java.util.Date
 
 
 // @Serializable
@@ -15,13 +16,26 @@ data class Task(
     @ColumnInfo(name="code") val code: String = "",
     @ColumnInfo(name="abbr") val abbr: String = "",
     @ColumnInfo(name="title") val title: String = "Task",
-    @ColumnInfo(name="created_at") val creationTime: Date = Date(),
-    @ColumnInfo(name="modified_at") val modificationTime: Date = Date(),
-    @ColumnInfo(name="beginTime") val beginTime: Date? = null,
-    @ColumnInfo(name="endTime") val endTime: Date? = null,
+    @ColumnInfo(name="created_at") val creationTime: LocalDateTime = LocalDateTime.now(),
+    @ColumnInfo(name="modified_at") val modificationTime: LocalDateTime = LocalDateTime.now(),
+    @ColumnInfo(name="beginTime") val beginTime: LocalDateTime? = null,
+    @ColumnInfo(name="endTime") val endTime: LocalDateTime? = null,
 ) {
     fun getId(): Long? {
         return id
     }
 
+    fun isAvailable(timestamp: LocalDateTime?): Boolean {
+        if (beginTime === null || endTime === null)
+            return true
+        var result = false
+        if (timestamp === null) {
+            val ts = LocalDateTime.now()
+            result = (ts in beginTime .. endTime)
+        } else {
+            result =  (timestamp in beginTime..endTime)
+        }
+
+        return result
+    }
 }
