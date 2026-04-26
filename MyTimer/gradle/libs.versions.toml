@@ -9,7 +9,7 @@ activityCompose = "1.13.0"
 kotlin = "2.3.20"
 composeBom = "2026.03.01"
 lifecycleViewmodelCompose = "2.10.0"
-uiTextGoogleFonts = "1.10.6"
+uiTextGoogleFonts = "1.11.0"
 workRuntimeKtx = "2.11.2"
 datastorePreferences = "1.2.1"
 datastore = "1.2.1"
@@ -26,6 +26,8 @@ kotlintestCore = "3.4.2"
 kspVersion = "2.3.6"
 sqliteBundled = "2.6.2"
 mockito = "5.23.0"
+navigationRuntimeKtx = "2.9.7"
+navigationCompose = "2.9.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,6 +64,8 @@ androidx-sqlite-bundled = { group = "androidx.sqlite", name = "sqlite-bundled", 
 androidx-room-sqlite-wrapper = { module = "androidx.room:room-sqlite-wrapper", version.ref = "roomCompiler"}
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito"}
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockito"}
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,42 +1,71 @@
 package fi.fimurito.mytimer
 
+
 import android.content.Context
+import android.graphics.pdf.content.PdfPageGotoLinkContent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
+
+
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarDefaults.InputField
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.runtime.Composable
+
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+
+import androidx.compose.ui.draw.DrawModifier
+
 import androidx.compose.ui.graphics.vector.ImageVector
+
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -45,6 +74,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
@@ -54,8 +87,86 @@ import fi.fimurito.mytimer.ui.theme.MyTimerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.IndicationNodeFactory
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicSecureTextField
+import androidx.compose.foundation.text.input.TextObfuscationMode
+//import androidx.compose.material.icons.Icons
+//import androidx.compose.material.icons.filled.ShoppingCart
+//import androidx.compose.material.ripple
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Brush.Companion.linearGradient
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.ContentDrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.node.DelegatableNode
+import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.test.isEnabled
+import androidx.compose.ui.test.isSelected
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import fi.fimurito.mytimer.ui.theme.MyTimerTheme
+import kotlin.math.abs
+import kotlin.math.sign
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
@@ -91,13 +202,14 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            MyTimerTheme {
-                MyTimerApp()
+            MyTimerTheme(dynamicColor = false) {
+                //MyTimerApp()
+                MainTimerApp()
             }
         }
     }
 }
-
+/*
 class MyTask
 {
     private var myTask = "Default Task"
@@ -108,7 +220,7 @@ class MyTask
         myTask = task
     }
 }
-
+*/
 /*
 @OptIn(ExperimentalTextApi::class)
 val displayLargeFontFamily =
@@ -129,6 +241,310 @@ val provider = GoogleFont.Provider(
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
+
+/*
+private val DarkColors = darkColors(
+    primary = R.color.vamk_blue,
+    secondary = R.color.purple_700
+)
+
+private val LightColors = lightColors(
+    primary = R.color.vamk_blue,
+    secondary = R.color.black
+)
+
+@Composable
+fun MyTimerTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        colors = if (darkTheme) DarkColors else LightColors,
+        content = content
+    )
+
+}
+*/
+@Composable
+fun HomeScreen(modifier: Modifier = Modifier) {
+    val textFieldState = rememberTextFieldState()
+    val items = listOf(
+        "Task 1", "Task 2", "Task 343", "Opetusta"
+    )
+
+    val fileteredItems by remember {
+        derivedStateOf {
+            val searchText = textFieldState.text.toString()
+            if (searchText.isEmpty()) {
+                emptyList()
+            } else {
+                items.filter { it.contains(searchText, ignoreCase = true)}
+            }
+        }
+    }
+
+    //var currentTask: Task
+    val currentItem = remember { mutableStateOf<String>("") }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column() {
+            TaskSearchBar(
+                textFieldState = textFieldState,
+                onSearch = {
+
+                },
+                searchResults = fileteredItems
+            )
+
+            Text("Current item:$currentItem")
+
+        }
+    }
+}
+
+private class ScaleNode(private val interactionSource: InteractionSource): Modifier.Node(),
+    DrawModifierNode {
+
+        var currentPressPosition: Offset = Offset.Zero
+    val animatedScalePercent = Animatable(1f)
+
+    private suspend fun animateToPressed(pressPosition: Offset) {
+        currentPressPosition = pressPosition
+        animatedScalePercent.animateTo(0.9f, spring())
+    }
+
+    private suspend fun animateToResting() {
+        animatedScalePercent.animateTo(1f, spring())
+    }
+
+    override fun onAttach() {
+        coroutineScope.launch {
+            interactionSource.interactions.collectLatest { interaction ->
+                when (interaction) {
+                    is PressInteraction.Press -> animateToPressed(interaction.pressPosition)
+                    is PressInteraction.Release -> animateToResting()
+                    is PressInteraction.Cancel -> animateToResting()
+                }
+            }
+        }
+    }
+
+    override fun ContentDrawScope.draw() {
+        scale(
+            scale = animatedScalePercent.value,
+            pivot = currentPressPosition
+        ) {
+            this@draw.drawContent()
+        }
+    }
+}
+object ScaleIndication: IndicationNodeFactory {
+    override fun create(interactionSource: InteractionSource): DelegatableNode {
+        return ScaleNode(interactionSource)
+    }
+    override fun equals(other: Any?): Boolean = other === ScaleIndication
+    override fun hashCode() = 100
+}
+
+@Composable
+fun ScaleButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionSource: MutableInteractionSource? = null,
+    shape: Shape = CircleShape,
+    content: @Composable RowScope.() -> Unit
+) {
+    Row(
+        modifier = modifier
+            .defaultMinSize(minWidth = 76.dp, minHeight = 48.dp)
+            .clickable(
+                enabled = enabled,
+                indication = ScaleIndication,
+                interactionSource = interactionSource,
+                onClick = onClick
+            )
+            .border(width = 2.dp, color = Color.Blue, shape = shape)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        content = content
+    )
+}
+
+@Composable
+fun LoginScreen(modifier: Modifier = Modifier) {
+    var loggedIn by rememberSaveable() { mutableStateOf(false) }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (loggedIn) {
+            Column {
+                Row {
+                    Text("Logout user",
+                        Modifier.padding(30.dp))
+                }
+                Row {
+                    Button(onClick = {
+                        loggedIn = false
+                        tabEnabled["Reload"] = false
+                    }) {
+                        Text(stringResource(R.string.label_logout))
+                    }
+                }
+            }
+
+
+        } else {
+            Column() {
+                Row {
+                    Text("Please Login")
+                }
+                Row() {
+                    TextField(
+                        state = rememberTextFieldState(initialText = "john.doe@mail.com"),
+                        label = { Text(stringResource(R.string.label_login)) }
+                    )
+                }
+                Row() {
+                    PasswordTextField(
+                        //state = rememberTextFieldState(initialText = ""),
+                        //label = { Text(stringResource(R.string.label_password)) },
+                    )
+                }
+                Row() {
+                    Button(onClick = {
+                        loggedIn = true
+                        tabEnabled["Reload"] = true
+                    }) {
+                        Text(stringResource(R.string.label_login))
+                    }
+                }
+            }
+        }
+
+
+
+
+    }
+}
+
+
+@Composable
+fun ProfileScreen(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Profile Screen")
+    }
+}
+
+@Composable
+fun ReloadScreen(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Reload Screen")
+    }
+}
+
+@Composable
+fun FavouritesScreen(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Favourites Screen")
+    }
+}
+
+@Composable
+fun AppNavHost(
+    navController: NavHostController,
+    startDestination: AppDestinations,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController,
+        startDestination = startDestination.route
+    ) {
+        AppDestinations.entries.forEach { destination ->
+            composable(destination.route) {
+                when(destination) {
+                    AppDestinations.HOME -> HomeScreen()
+                    AppDestinations.FAVORITES -> FavouritesScreen()
+                    AppDestinations.LOGIN -> LoginScreen()
+                    AppDestinations.RELOAD -> ReloadScreen()
+                    AppDestinations.PROFILE -> ProfileScreen()
+                }
+            }
+        }
+    }
+}
+
+val tabEnabled =  mutableStateMapOf(
+    "HOME" to true,
+    "Fav" to true,
+    "Profile" to true,
+    "Login" to true,
+    "Reload" to false)
+
+
+
+@PreviewScreenSizes
+@Composable
+fun MainTimerApp(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+    val startDestination = AppDestinations.HOME
+    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+    /*
+    val tabEnabled by rememberSaveable { mutableStateMapOf(
+        "HOME" to true,
+        "Fav" to true,
+        "Profile" to true,
+        "Login" to true,
+        "Reload" to false)
+    }
+    */
+
+    Scaffold(modifier = modifier) { contentPadding ->
+        PrimaryTabRow(selectedTabIndex = selectedDestination,
+            modifier = Modifier.padding(contentPadding)) {
+            AppDestinations.entries.forEachIndexed { index, destination ->
+                Tab(
+                    selected = selectedDestination == index,
+                    onClick = {
+                        navController.navigate(route = destination.route)
+                        selectedDestination = index
+                    },
+                    text = {
+                        Text(
+                            text = destination.label,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    enabled = tabEnabled[destination.label] == true,
+                    icon = {
+                        Icon(
+                        painterResource(  destination.icon),
+                        contentDescription = destination.contentDescription
+                        )
+                    },
+                    //selectedContentColor = MaterialTheme.colorScheme.primary,
+                    //unselectedContentColor = MaterialTheme.colorScheme.secondary,
+                )
+            }
+        }
+        AppNavHost(navController, startDestination)
+    }
+}
 
 @PreviewScreenSizes
 @Composable
@@ -172,14 +588,17 @@ fun MyTimerApp() {
 }
 
 enum class AppDestinations(
+
     val label: String,
     val icon: Int,
+    val route: String,
+    val contentDescription: String
 ) {
-    HOME("HOME", R.drawable.ic_home),
-    FAVORITES("Favorites", R.drawable.ic_favorite),
-    PROFILE("Profile", R.drawable.ic_account_box),
-    LOGIN("Login", R.drawable.ic_login),
-    RELOAD("Reload", R.drawable.ic_reload),
+    HOME("HOME", R.drawable.ic_home, "home", "Home"),
+    FAVORITES("Fav", R.drawable.ic_favorite, "favourites", "Favourites"),
+    PROFILE("Profile", R.drawable.ic_account_box, "profile", "Profile"),
+    LOGIN("Login", R.drawable.ic_login, "login", "Login"),
+    RELOAD("Reload", R.drawable.ic_reload, "reload", "Reload"),
 }
 
 @Composable
@@ -203,7 +622,7 @@ fun GreetingPreview() {
 fun TaskSwitcher() {
     Column(modifier = Modifier
         .padding(16.dp)
-        .fillMaxWidth()) {
+        .fillMaxSize()) {
         Row() {
             var task by remember { mutableStateOf("") }
             /*
@@ -416,4 +835,100 @@ fun LongTaskDropdown(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TaskSearchBar(
+    textFieldState: TextFieldState,
+    onSearch: (String) -> Unit,
+    searchResults: List<String>,
+    modifier: Modifier = Modifier
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Box(Modifier
+        .fillMaxSize()
+        .semantics { isTraversalGroup = true}
+    ) {
+        SearchBar(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .semantics { traversalIndex = 0f },
+            inputField = {
+                SearchBarDefaults.InputField(
+                    query = textFieldState.text.toString(),
+                    onQueryChange = { textFieldState.edit { replace(0, length, it)}},
+                    onSearch = {
+                        onSearch(textFieldState.text.toString())
+                        expanded = false
+                    },
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                    placeholder = { Text("Etsi") }
+                )
+            },
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+        ) {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                searchResults.forEach { result ->
+                    ListItem(
+                        headlineContent = { Text(result)},
+                        modifier = Modifier
+                            .clickable {
+                                textFieldState.edit { replace(0, length, result)}
+                            }
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun PasswordTextField() {
+    val state = remember { TextFieldState() }
+    var showPassword by remember { mutableStateOf(false) }
+    BasicSecureTextField(
+        state = state,
+        textObfuscationMode =
+            if (showPassword) {
+                TextObfuscationMode.Visible
+            } else {
+                TextObfuscationMode.RevealLastTyped
+            },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(6.dp)
+            .border(1.dp, Color.LightGray, RoundedCornerShape(6.dp))
+            .padding(6.dp),
+        decorator = { innerTextField ->
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 16.dp, end = 48.dp)
+                ) {
+                    innerTextField()
+                }
+                Icon(
+                    if (showPassword) {
+                        //Icons.Filled.Visibility
+                        painterResource(R.drawable.ic_login)
+                    } else {
+                        //Icons.Filled.VisibilityOff
+                        painterResource(R.drawable.ic_home)
+                    },
+                    contentDescription = "Toggle password visibility",
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .requiredSize(48.dp).padding(16.dp)
+                        .clickable { showPassword = !showPassword }
+                )
+            }
+        }
+    )
 }

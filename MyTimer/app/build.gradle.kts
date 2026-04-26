@@ -61,7 +61,9 @@ android {
 
     testOptions {
         packaging {
-            resources.excludes.add("META-INF/*")
+            //resources.excludes.add("META-INF/*")
+            resources.excludes.add(("META-INF/LICENSE.md"))
+            resources.excludes.add(("META-INF/LICENSE-notice.md"))
         }
     }
 
@@ -98,6 +100,10 @@ dependencies {
     implementation(libs.robolectric)
     //implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.sqlite.bundled)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+
+
 
     testImplementation(libs.kotlintest.core)
     testImplementation(libs.turbine)
