@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.pdf.content.PdfPageGotoLinkContent
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -43,6 +44,12 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarDefaults.InputField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -64,8 +71,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
-import androidx.compose.ui.text.googlefonts.GoogleFont
-import androidx.compose.ui.text.style.TextOverflow
+
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -116,12 +122,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextObfuscationMode
 //import androidx.compose.material.icons.Icons
 //import androidx.compose.material.icons.filled.ShoppingCart
@@ -132,7 +143,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -142,6 +155,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -149,6 +163,7 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawOutline
@@ -159,14 +174,24 @@ import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.test.isEnabled
 import androidx.compose.ui.test.isSelected
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import fi.fimurito.mytimer.ui.BrownStyle
+import fi.fimurito.mytimer.ui.ProjectStyle
+import fi.fimurito.mytimer.ui.TimerClock
 import fi.fimurito.mytimer.ui.theme.MyTimerTheme
 import kotlin.math.abs
 import kotlin.math.sign
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.JdkConstants
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
@@ -265,13 +290,24 @@ fun MyTimerTheme(
 
 }
 */
+
+
+
+
+
+
+@Preview(showBackground = true)
+@Preview(
+    name = "Medium Phone",
+    device= "spec:width=412dp,height=915dp,dpi=420",
+    showSystemUi=true)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    val textFieldState = rememberTextFieldState()
+    val taskFieldState = rememberTextFieldState()
     val items = listOf(
         "Task 1", "Task 2", "Task 343", "Opetusta"
     )
-
+/*
     val fileteredItems by remember {
         derivedStateOf {
             val searchText = textFieldState.text.toString()
@@ -282,25 +318,115 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             }
         }
     }
-
+*/
     //var currentTask: Task
-    val currentItem = remember { mutableStateOf<String>("") }
+    val currentItem = remember { mutableStateOf<Task?>(null) }
+    val infoText = remember { mutableListOf<String>("Ready") }
+    val taskSearchText = remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
-        Column() {
-            TaskSearchBar(
-                textFieldState = textFieldState,
-                onSearch = {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
 
-                },
-                searchResults = fileteredItems
-            )
+            Row() {
+                Text("Current date/time")
+                TimerClock(
+                    clockStyle = BrownStyle
+                )
+            }
 
-            Text("Current item:$currentItem")
+            Row {
+                Text("Current Task:",
+                    modifier = Modifier.weight(2f)
+                )
+                Text(
+                    text = currentItem.value?.title ?: ">no task<",
+                    modifier = Modifier.weight(2f),
 
+                )
+            }
+            Row(modifier = Modifier.padding(4.dp)) {
+                Button(
+                    shape = RectangleShape,
+                    onClick = {
+                        infoText.add("Clicked ++")
+                    },
+                    modifier = Modifier.weight(2f),
+                ) {
+                    Text(stringResource(R.string.button_continue_task))
+                }
+                Spacer(modifier = Modifier.padding(2.dp))
+                Button(
+                    shape = RectangleShape,
+                    onClick = {
+                        infoText.add("'Switch' Clicked")
+                    },
+                    modifier = Modifier.weight(2f),
+                ) {
+                    Text(stringResource(R.string.button_change_task))
+                    Icon(painterResource( R.drawable.ic_reload), contentDescription = "Switch task",
+                        modifier = Modifier.padding(start = 8.dp))
+                }
+            }
+            Row(
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+            ) {
+                OutlinedTextField(
+                    value = taskSearchText.value,
+                    onValueChange = { taskSearchText.value = it  },
+                    label = { Text("Task ID #")},
+                    placeholder = { Text("Task ID #")},
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier
+                        .weight(.33f)
+                        .padding(2.dp)
+                        //.requiredWidth(120.dp)
+                )
+                //Icon(painterResource(R.drawable.ic_home), contentDescription = "Show/Hide",
+                //    modifier = Modifier.weight(.1f))
+                OutlinedTextField(
+                    value = taskSearchText.value,
+                    label = { Text("Task name")},
+                    onValueChange = { taskSearchText.value = it},
+                    singleLine = true,
+                    modifier = Modifier
+                        .weight(.63f)
+                        .padding(2.dp)
+                        //.requiredWidth(220.dp)
+
+                )
+            }
+            /*
+            Row {
+
+                TaskSearchBar(
+                    textFieldState = textFieldState,
+                    onSearch = {
+
+                    },
+                    searchResults = fileteredItems
+                )
+
+                Text("Current item:$currentItem")
+            }
+*/
+            //Row {
+                // TaskSwitcher()
+            Text("Log:",
+                color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(
+                    text = infoText.joinToString(" "),
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 12,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            //}
         }
     }
 }
@@ -400,23 +526,32 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
 
         } else {
-            Column() {
-                Row {
-                    Text("Please Login")
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center) {
+                    Text(text = "Please Login",
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.W800,
+                        fontSize = 32.sp,
+                    )
                 }
-                Row() {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center) {
                     TextField(
+                        modifier = Modifier.fillMaxWidth(),
                         state = rememberTextFieldState(initialText = "john.doe@mail.com"),
                         label = { Text(stringResource(R.string.label_login)) }
                     )
                 }
-                Row() {
+                Row(modifier = Modifier.fillMaxWidth()) {
                     PasswordTextField(
                         //state = rememberTextFieldState(initialText = ""),
                         //label = { Text(stringResource(R.string.label_password)) },
                     )
                 }
-                Row() {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center) {
                     Button(onClick = {
                         loggedIn = true
                         tabEnabled["Reload"] = true
@@ -622,7 +757,7 @@ fun GreetingPreview() {
 fun TaskSwitcher() {
     Column(modifier = Modifier
         .padding(16.dp)
-        .fillMaxSize()) {
+        .fillMaxWidth()) {
         Row() {
             var task by remember { mutableStateOf("") }
             /*
@@ -642,7 +777,8 @@ fun TaskSwitcher() {
             )
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()) {
             Button(
                 onClick = {
                     Log.d(logPrefix, "Button: Continue Task")
@@ -813,6 +949,7 @@ fun LongTaskDropdown(
     Box(
         modifier = Modifier
             .padding(16.dp)
+            .fillMaxWidth()
 
     ) {
         Button(onClick = { expanded = !expanded},
@@ -822,7 +959,8 @@ fun LongTaskDropdown(
         }
         DropdownMenu(
             expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.fillMaxWidth(.5f),
         ) {
             taskItemData.forEach { option ->
                 DropdownMenuItem(
@@ -849,14 +987,14 @@ fun TaskSearchBar(
 
     Box(Modifier
         .fillMaxSize()
-        .semantics { isTraversalGroup = true}
+        .semantics { isTraversalGroup = true }
     ) {
         SearchBar(
             modifier = Modifier
                 .align(Alignment.Center)
                 .semantics { traversalIndex = 0f },
             inputField = {
-                SearchBarDefaults.InputField(
+                InputField(
                     query = textFieldState.text.toString(),
                     onQueryChange = { textFieldState.edit { replace(0, length, it)}},
                     onSearch = {
@@ -877,7 +1015,7 @@ fun TaskSearchBar(
                         headlineContent = { Text(result)},
                         modifier = Modifier
                             .clickable {
-                                textFieldState.edit { replace(0, length, result)}
+                                textFieldState.edit { replace(0, length, result) }
                             }
                             .fillMaxWidth()
                     )
@@ -892,7 +1030,12 @@ fun TaskSearchBar(
 fun PasswordTextField() {
     val state = remember { TextFieldState() }
     var showPassword by remember { mutableStateOf(false) }
+
     BasicSecureTextField(
+        textStyle = TextStyle(
+            color = MaterialTheme.colorScheme.primary,
+            background = MaterialTheme.colorScheme.surface,
+        ),
         state = state,
         textObfuscationMode =
             if (showPassword) {
@@ -907,6 +1050,8 @@ fun PasswordTextField() {
             .padding(6.dp),
         decorator = { innerTextField ->
             Box(modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.label_password),
+                    fontSize = 10.sp,)
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
@@ -917,15 +1062,16 @@ fun PasswordTextField() {
                 Icon(
                     if (showPassword) {
                         //Icons.Filled.Visibility
-                        painterResource(R.drawable.ic_login)
+                        painterResource(R.drawable.ic_visible)
                     } else {
                         //Icons.Filled.VisibilityOff
-                        painterResource(R.drawable.ic_home)
+                        painterResource(R.drawable.ic_visible_off)
                     },
                     contentDescription = "Toggle password visibility",
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        .requiredSize(48.dp).padding(16.dp)
+                        .requiredSize(48.dp)
+                        .padding(16.dp)
                         .clickable { showPassword = !showPassword }
                 )
             }

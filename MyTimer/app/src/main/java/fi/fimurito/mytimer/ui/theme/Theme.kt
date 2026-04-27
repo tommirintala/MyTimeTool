@@ -37,7 +37,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = Color.Black,
     tertiaryFixed = VamkYellow,
     primaryContainer = Color.LightGray,
-    surface = VamkGreen,
+    surface = VamkBlue,
     onSurface = VamkOrange,
 
     /*

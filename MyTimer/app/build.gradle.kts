@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.androidx.sqlite.bundled)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.ui.text)
 
 
 

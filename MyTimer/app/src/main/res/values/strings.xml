@@ -7,9 +7,10 @@
     <string name="pref_minute_divisor">minute_divisor_value</string>
     <string name="pref_task_length">task_length_value</string>
 
-    <string name="button_change_task">Change Task</string>
+    <string name="button_change_task">Switch</string>
     <string name="button_continue_task">++</string>
     <string name="button_end_task">Finish / Log</string>
+
 
     <string name="button_confirm">Confirm</string>
     <string name="button_dismiss">Dismiss</string>

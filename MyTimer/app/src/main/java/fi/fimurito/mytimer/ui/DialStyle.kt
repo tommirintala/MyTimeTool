@@ -1,0 +1,189 @@
+package fi.fimurito.mytimer.ui
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.bouncycastle.jcajce.provider.digest.Blake3
+
+//import com.nikhil.here.watchface.ui.theme.Marron2
+//import com.nikhil.here.watchface.ui.theme.MerriWeather
+//import com.nikhil.here.watchface.ui.theme.WorkSans
+data class DialStyle(
+    val stepsWidth: Dp = 1.2.dp,
+    val stepsColor: Color = Color.Black,
+    val normalStepsLineHeight: Dp = 8.dp,
+    val fiveStepsLineHeight: Dp = 16.dp,
+    val stepsTextStyle: TextStyle = TextStyle(),
+    val stepsLabelTopPadding: Dp = 20.dp
+)
+
+data class ClockStyle(
+    val secondsDialStyle: DialStyle = DialStyle(),
+    val minutesDialStyle: DialStyle = DialStyle(),
+    val hourLabelStyle: TextStyle = TextStyle(),
+    val overlayStrokeWidth: Dp = 2.dp,
+    val overlayStrokeColor: Color = Color.Red
+)
+
+val StandardClockStyle = ClockStyle(
+    secondsDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = WorkSans
+        ),
+        stepsColor = Color.White.copy(alpha = 0.8f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    minutesDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.White.copy(alpha = 0.8f),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = WorkSans
+        ),
+        stepsColor = Color.White.copy(alpha = 0.8f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    hourLabelStyle = TextStyle(
+        color = Color.White,
+        fontSize = 60.sp,
+        fontWeight = FontWeight.Bold,
+        //fontFamily = WorkSans
+    ),
+    overlayStrokeColor = Color.White,
+    overlayStrokeWidth = 2.dp
+)
+
+
+val MarronStyle = ClockStyle(
+    secondsDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = WorkSans
+        ),
+        stepsColor = Color.Blue,
+        //stepsColor = Marron2,
+        stepsLabelTopPadding = 20.dp
+    ),
+    minutesDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.White.copy(alpha = 0.8f),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = WorkSans
+        ),
+        //stepsColor = Marron2,
+        stepsColor = Color.Blue,
+        stepsLabelTopPadding = 20.dp
+    ),
+    hourLabelStyle = TextStyle(
+        color = Color.White,
+        fontSize = 60.sp,
+        fontWeight = FontWeight.Bold,
+        //fontFamily = WorkSans
+    ),
+    overlayStrokeColor = Color.White,
+    overlayStrokeWidth = 2.dp
+)
+
+
+val lightStyle = ClockStyle(
+    secondsDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.Black.copy(alpha = 0.8f),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = WorkSans
+        ),
+        stepsColor = Color.Black.copy(alpha = 0.5f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    minutesDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.Black.copy(alpha = 0.8f),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = WorkSans
+        ),
+        stepsColor = Color.Black.copy(alpha = 0.5f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    hourLabelStyle = TextStyle(
+        color = Color.Black,
+        fontSize = 60.sp,
+        fontWeight = FontWeight.Bold,
+        //fontFamily = WorkSans
+    ),
+    overlayStrokeColor = Color.Black,
+    overlayStrokeWidth = 2.dp
+)
+
+
+val BrownStyle = ClockStyle(
+    secondsDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.Black.copy(alpha = 0.8f),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = MerriWeather
+        ),
+        stepsColor = Color.Black.copy(alpha = 0.5f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    minutesDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.Black.copy(alpha = 0.8f),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            //fontFamily = MerriWeather
+        ),
+        stepsColor = Color.Black.copy(alpha = 0.5f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    hourLabelStyle = TextStyle(
+        color = Color.Black,
+        fontSize = 60.sp,
+        fontWeight = FontWeight.Bold,
+        //fontFamily = MerriWeather
+    ),
+    overlayStrokeColor = Color.Black,
+    overlayStrokeWidth = 2.dp
+)
+
+val ProjectStyle = ClockStyle(
+    secondsDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.White.copy(),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+        ),
+        stepsColor = Color.White.copy(alpha = 0.5f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    minutesDialStyle = DialStyle().copy(
+        stepsTextStyle = TextStyle(
+            color = Color.White.copy(alpha = 0.7f),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            //fontFamily =
+        ),
+        stepsColor = Color.Blue.copy(alpha = 0.5f),
+        stepsLabelTopPadding = 20.dp
+    ),
+    hourLabelStyle = TextStyle(
+        color = Color.White.copy(alpha = 0.4f),
+        fontSize = 60.sp,
+        fontWeight = FontWeight.Bold,
+    ),
+    overlayStrokeColor = Color.White,
+    overlayStrokeWidth = 4.dp,
+)

@@ -28,6 +28,7 @@ sqliteBundled = "2.6.2"
 mockito = "5.23.0"
 navigationRuntimeKtx = "2.9.7"
 navigationCompose = "2.9.7"
+uiText = "1.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +67,7 @@ mockito = { module = "org.mockito:mockito-core", version.ref = "mockito"}
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockito"}
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text", version.ref = "uiText" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
