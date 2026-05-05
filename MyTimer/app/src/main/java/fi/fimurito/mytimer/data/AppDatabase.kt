@@ -9,7 +9,7 @@ import fi.fimurito.mytimer.data.model.TaskLog
 
 @Database(entities = [TaskLog::class, Task::class], version = 1, exportSchema = true)
 @TypeConverters(MyTypeConverters::class)
-abstract class TaskDatabase : RoomDatabase() {
+abstract class AppDatabase : RoomDatabase() {
     abstract fun taskLogDao() : TaskLogDao
     abstract fun taskDao(): TaskDao
 }

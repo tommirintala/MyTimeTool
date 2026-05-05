@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 
 import fi.fimurito.mytimer.Utils
+import fi.fimurito.mytimer.data.model.Task
+import fi.fimurito.mytimer.data.model.TaskLog
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -17,12 +19,12 @@ class SimpleTaskLogTest {
     private val context: Context by lazy { RuntimeEnvironment.getApplication() }
     private lateinit var taskDao: TaskDao
     private lateinit var taskLogDao: TaskLogDao
-    private lateinit var db: TaskDatabase
+    private lateinit var db: AppDatabase
     @Before
     fun setUp() {
         db = Room.inMemoryDatabaseBuilder(
             context,
-            TaskDatabase::class.java
+            AppDatabase::class.java
         ).build()
         taskDao = db.taskDao()
         taskLogDao = db.taskLogDao()
@@ -38,7 +40,7 @@ class SimpleTaskLogTest {
         val tasks = (0 until 4L).map { id ->
             Task(
                 id = id,
-                remoteId = 1000L+id,
+                remoteId = 1000L + id,
                 title = "Task #${id}",
                 code = "100${id}",
                 abbr = "T${id}",

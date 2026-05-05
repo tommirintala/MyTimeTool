@@ -3,8 +3,6 @@ package fi.fimurito.mytimer
 
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
-import org.mockito.MockedConstruction
-import java.lang.reflect.Constructor
 
 class AppConstantsTest {
 
@@ -17,8 +15,8 @@ class AppConstantsTest {
 
     @Test
     fun testDefaultTaskLength() {
-        assertNotNull(AppConstants.DEFAULT_TASK_MINUTE_LENGTH)
-        assertNotEquals(AppConstants.DEFAULT_TASK_MINUTE_LENGTH, 0)
+        assertNotNull(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
+        assertNotEquals(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES, 0)
 
     }
 }

@@ -1,12 +1,9 @@
 package fi.fimurito.mytimer.data
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import android.provider.SyncStateContract
 import android.util.Log
 import fi.fimurito.mytimer.AppConstants
-import fi.fimurito.mytimer.R
 import androidx.core.content.edit
 
 private const val PREF_FILE_NAME :String = "UserPreferences"
@@ -24,35 +21,35 @@ class Prefs(val context: Context) {
         getSaveToCloud()
     }
 
-    fun getCurrentMinuteDivisor(): Int {
-        AppConstants.CURRENT_MINUTE_DIVISOR = sharedPrefs.getInt(PREF_MINUTE_DIVISOR, AppConstants.DEFAULT_MINUTE_DIVISOR)
+    fun getCurrentMinuteDivisor(): Long {
+        AppConstants.CURRENT_MINUTE_DIVISOR = sharedPrefs.getLong(PREF_MINUTE_DIVISOR, AppConstants.DEFAULT_MINUTE_DIVISOR)
         return AppConstants.CURRENT_MINUTE_DIVISOR
     }
 
-    fun setCurrentMinuteDivisor(div: Int): Boolean {
+    fun setCurrentMinuteDivisor(div: Long): Boolean {
         if (div <= 0)
             return false
         sharedPrefs.edit {
-            putInt(PREF_MINUTE_DIVISOR, div)
+            putLong(PREF_MINUTE_DIVISOR, div)
         }
         AppConstants.CURRENT_MINUTE_DIVISOR = div
         Log.d(AppConstants.LOG_TAG, "config: minute divisor = $div")
         return true
     }
 
-    fun getCurrentTaskLength(): Int {
-        AppConstants.CURRENT_TASK_LENGTH = sharedPrefs.getInt(
+    fun getCurrentTaskLength(): Long {
+        AppConstants.CURRENT_TASK_LENGTH = sharedPrefs.getLong(
             PREF_TASK_DEFAULT_LENGTH,
-            AppConstants.DEFAULT_TASK_MINUTE_LENGTH)
+            AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
         return AppConstants.CURRENT_TASK_LENGTH
     }
 
-    fun setCurrentTaskLength(len: Int): Boolean {
+    fun setCurrentTaskLength(len: Long): Boolean {
         if (len <= 0)
             return false
 
         sharedPrefs.edit {
-            putInt(PREF_TASK_DEFAULT_LENGTH, len)
+            putLong(PREF_TASK_DEFAULT_LENGTH, len)
         }
         Log.d(AppConstants.LOG_TAG, "config: task length = $len")
         return true

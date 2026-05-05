@@ -1,5 +1,6 @@
 package fi.fimurito.mytimer.data
 
+import fi.fimurito.mytimer.data.model.TaskLog
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime

@@ -11,7 +11,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 
 import app.cash.turbine.test
-import app.cash.turbine.awaitItem
+import fi.fimurito.mytimer.data.model.Task
+import fi.fimurito.mytimer.data.model.TaskLog
 import kotlin.collections.emptyList
 
 import io.kotlintest.shouldBe
@@ -28,13 +29,13 @@ class TaskAndLogDBTest {
     private lateinit var taskDao: TaskDao
     private lateinit var taskLogDao: TaskLogDao
 
-    private lateinit var db: TaskDatabase
+    private lateinit var db: AppDatabase
 
     @Before
     fun setUp() {
         db = Room.inMemoryDatabaseBuilder(
             context,
-            TaskDatabase::class.java,
+            AppDatabase::class.java,
         ).build()
         taskDao = db.taskDao()
         taskLogDao = db.taskLogDao()
@@ -53,7 +54,7 @@ class TaskAndLogDBTest {
                 remoteId = id + 1000L,
                 title = "Task #$id",
                 code = "101-$id",
-                abbr = "T${id+1000L}",
+                abbr = "T${id + 1000L}",
             )
         }
 

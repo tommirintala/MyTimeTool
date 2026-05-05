@@ -1,5 +1,6 @@
 package fi.fimurito.mytimer.data
 
+import fi.fimurito.mytimer.data.model.TaskLog
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 import java.util.Date
@@ -9,12 +10,14 @@ class TaskLogRepository(private val dao: TaskLogDao) {
         tId: Long, bTime: LocalDateTime, eTime: LocalDateTime,
         logComment: String
     ) {
-        dao.insertAll(TaskLog(
-            taskId = tId,
-            beginDate = bTime,
-            endDate = eTime,
-            comment = logComment
-        ))
+        dao.insertAll(
+            TaskLog(
+                taskId = tId,
+                beginDate = bTime,
+                endDate = eTime,
+                comment = logComment
+            )
+        )
     }
 
     //suspend fun getLastTask(): TaskRecord {
@@ -22,13 +25,15 @@ class TaskLogRepository(private val dao: TaskLogDao) {
     //}
 
     suspend fun commitTaskEntry(taskIdNum: Long, startTime: LocalDateTime, endTime: LocalDateTime, taskComment: String) {
-        dao.insertAll(TaskLog(
-            taskId = taskIdNum,
-            beginDate = startTime,
-            endDate = endTime,
-            comment = taskComment,
-            modificationTime = LocalDateTime.now()
-        ))
+        dao.insertAll(
+            TaskLog(
+                taskId = taskIdNum,
+                beginDate = startTime,
+                endDate = endTime,
+                comment = taskComment,
+                modificationTime = LocalDateTime.now()
+            )
+        )
     }
 
     suspend fun updateTaskLog(record: TaskLog) {

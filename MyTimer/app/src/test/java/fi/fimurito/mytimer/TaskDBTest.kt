@@ -3,7 +3,6 @@ package fi.fimurito.mytimer
 //import androidx.core.content.ContextCompat.getString
 
 import app.cash.turbine.test
-import app.cash.turbine.awaitItem
 import kotlin.collections.emptyList
 
 
@@ -34,8 +33,8 @@ import org.robolectric.RuntimeEnvironment
 import io.kotlintest.shouldBe
 
 
-import fi.fimurito.mytimer.data.TaskDatabase
-import fi.fimurito.mytimer.data.Task
+import fi.fimurito.mytimer.data.AppDatabase
+import fi.fimurito.mytimer.data.model.Task
 import fi.fimurito.mytimer.data.TaskDao
 import java.time.LocalDateTime
 
@@ -49,13 +48,13 @@ class TaskDBTest {
     private val context: Context by lazy { RuntimeEnvironment.getApplication() }
 
     private lateinit var subject: TaskDao
-    private lateinit var db: TaskDatabase
+    private lateinit var db: AppDatabase
 
     @Before
     fun setUp() {
         db = Room.inMemoryDatabaseBuilder(
             context,
-            TaskDatabase::class.java,
+            AppDatabase::class.java,
         ).build()
         subject = db.taskDao()
     }

@@ -1,14 +1,13 @@
 package fi.fimurito.mytimer
 
 
-import fi.fimurito.mytimer.data.Task
+import fi.fimurito.mytimer.data.model.Task
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
-import java.util.Date
 
 // import org.junit.jupiter.api.Assertions.*
 
