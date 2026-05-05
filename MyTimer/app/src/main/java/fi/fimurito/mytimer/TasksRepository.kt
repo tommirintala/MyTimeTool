@@ -1,7 +1,9 @@
 package fi.fimurito.mytimer
 
-import androidx.work.ListenableWorker
-import fi.fimurito.mytimer.data.Task
+import fi.fimurito.mytimer.data.Result
+import fi.fimurito.mytimer.data.model.Task
+import fi.fimurito.mytimer.ui.task.TaskInUserView
+import fi.fimurito.mytimer.ui.task.TaskResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.sync.Mutex
@@ -28,6 +30,10 @@ class TasksRepository(
         return latestTaskMutex.withLock { this.latestTasks }
     }
      */
+
+    suspend fun switch(taskId: Long): Result<Task> {
+
+    }
 
     suspend fun getLatestTasks(refresh: Boolean = false): List<Task> {
         return if (refresh) {

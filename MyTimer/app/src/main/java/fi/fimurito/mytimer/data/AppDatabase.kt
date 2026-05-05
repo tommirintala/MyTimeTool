@@ -3,6 +3,8 @@ package fi.fimurito.mytimer.data
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import fi.fimurito.mytimer.data.model.Task
+import fi.fimurito.mytimer.data.model.TaskLog
 
 
 @Database(entities = [TaskLog::class, Task::class], version = 1, exportSchema = true)

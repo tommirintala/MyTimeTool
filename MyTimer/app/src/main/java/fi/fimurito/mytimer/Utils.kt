@@ -22,7 +22,7 @@ class Utils {
             val now = LocalDateTime.now()
 
             val nex = now
-                .withMinute(divBy(now.minute, AppConstants.CURRENT_MINUTE_DIVISOR))
+                .withMinute(divBy(now.minute, AppConstants.CURRENT_MINUTE_DIVISOR.toInt()))
                 .withSecond(0)
                 .withNano(0)
             return nex
@@ -32,7 +32,7 @@ class Utils {
             try {
                 val lt = LocalDateTime.parse(date)
                 val tt = lt
-                    .withMinute(divBy(lt.minute, AppConstants.CURRENT_MINUTE_DIVISOR))
+                    .withMinute(divBy(lt.minute, AppConstants.CURRENT_MINUTE_DIVISOR.toInt()))
                     .withSecond(0)
                     .withNano(0)
                 return tt
@@ -44,7 +44,7 @@ class Utils {
 
         fun taskTimer(st: LocalDateTime): LocalDateTime {
             val lt = st
-                .withMinute(divBy(st.minute, AppConstants.CURRENT_MINUTE_DIVISOR))
+                .withMinute(divBy(st.minute, AppConstants.CURRENT_MINUTE_DIVISOR.toInt()))
                 .withSecond(0)
                 .withNano(0)
 

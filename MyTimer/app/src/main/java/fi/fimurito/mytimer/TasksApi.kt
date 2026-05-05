@@ -1,6 +1,6 @@
 package fi.fimurito.mytimer
 
-import fi.fimurito.mytimer.data.Task
+import fi.fimurito.mytimer.data.model.Task
 
 
 interface TasksApi {

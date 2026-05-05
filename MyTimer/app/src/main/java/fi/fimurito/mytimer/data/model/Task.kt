@@ -1,12 +1,9 @@
-package fi.fimurito.mytimer.data
+package fi.fimurito.mytimer.data.model
 
-// import kotlinx.serialization.Serializable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDateTime
-// import java.util.Date
-
 
 // @Serializable
 @Entity(tableName = "tasks")

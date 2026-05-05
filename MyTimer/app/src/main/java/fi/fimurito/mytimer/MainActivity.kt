@@ -1,11 +1,10 @@
 package fi.fimurito.mytimer
 
 
+import android.app.Application
 import android.content.Context
-import android.graphics.pdf.content.PdfPageGotoLinkContent
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -40,29 +39,23 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarDefaults.InputField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-
-import androidx.compose.ui.draw.DrawModifier
 
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -87,8 +80,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import fi.fimurito.mytimer.data.Task
-import fi.fimurito.mytimer.data.TaskDatabase
+import fi.fimurito.mytimer.data.model.Task
+import fi.fimurito.mytimer.data.AppDatabase
 import fi.fimurito.mytimer.ui.theme.MyTimerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -96,40 +89,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.DragInteraction
-import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -137,61 +107,24 @@ import androidx.compose.foundation.text.input.TextObfuscationMode
 //import androidx.compose.material.icons.Icons
 //import androidx.compose.material.icons.filled.ShoppingCart
 //import androidx.compose.material.ripple
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.center
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
-import androidx.compose.ui.test.isEnabled
-import androidx.compose.ui.test.isSelected
-import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fi.fimurito.mytimer.ui.BrownStyle
 import fi.fimurito.mytimer.ui.ProjectStyle
 import fi.fimurito.mytimer.ui.TimerClock
-import fi.fimurito.mytimer.ui.theme.MyTimerTheme
-import kotlin.math.abs
-import kotlin.math.sign
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.intellij.lang.annotations.JdkConstants
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
@@ -199,31 +132,35 @@ class MainActivity : ComponentActivity() {
     private val _lastTask = MutableLiveData<Task>()
     val lastTask: LiveData<Task> = _lastTask
 
-    fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<TaskDatabase> {
+    fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
         val appContext = context.applicationContext
         val dbFile = appContext.getDatabasePath(getString(R.string.app_database_name))
-        return Room.databaseBuilder<TaskDatabase>(
+        return Room.databaseBuilder<AppDatabase>(
             context = appContext,
             name = dbFile.absolutePath
         )
     }
 
     fun getRoomDatabase(
-        builder: RoomDatabase.Builder<TaskDatabase>
-    ): TaskDatabase {
+        builder: RoomDatabase.Builder<AppDatabase>
+    ): AppDatabase {
         return builder
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
 
-    lateinit var db: TaskDatabase
+    lateinit var db: AppDatabase
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(logPrefix, "Loading app")
 
         db = getRoomDatabase(getDatabaseBuilder(applicationContext))
+        //taskHandler = TaskHandler()
+
 
         enableEdgeToEdge()
         setContent {
@@ -292,7 +229,8 @@ fun MyTimerTheme(
 */
 
 
-
+// val currentItem = remember { mutableStateOf<TaskHandler>(null) }
+val currentItem = TaskHandler()
 
 
 
@@ -302,11 +240,14 @@ fun MyTimerTheme(
     device= "spec:width=412dp,height=915dp,dpi=420",
     showSystemUi=true)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(viewModel: AppSharedViewModel,
+               modifier: Modifier = Modifier) {
     val taskFieldState = rememberTextFieldState()
     val items = listOf(
         "Task 1", "Task 2", "Task 343", "Opetusta"
     )
+
+
 /*
     val fileteredItems by remember {
         derivedStateOf {
@@ -320,23 +261,27 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     }
 */
     //var currentTask: Task
-    val currentItem = remember { mutableStateOf<Task?>(null) }
+
     val infoText = remember { mutableListOf<String>("Ready") }
     val taskSearchText = remember { mutableStateOf("") }
+
+
 
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
+
     ) {
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
 
-            Row() {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Text("Current date/time")
                 TimerClock(
-                    clockStyle = BrownStyle
+                    clockStyle = ProjectStyle,
                 )
             }
 
@@ -345,16 +290,32 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier.weight(2f)
                 )
                 Text(
-                    text = currentItem.value?.title ?: ">no task<",
+                    text = viewModel.getTaskTitle(),
                     modifier = Modifier.weight(2f),
-
                 )
+            }
+
+            Row {
+                Text("Start time:",
+                    modifier = Modifier.weight(2f))
+
+                Text(text=viewModel.getStartTime(),
+                    modifier = Modifier.weight(2f)
+                )
+            }
+
+            Row {
+                Text("End time:",
+                    modifier = Modifier.weight(2f))
+                Text(text = viewModel.getEndTime(),
+                    modifier = Modifier.weight(2f))
             }
             Row(modifier = Modifier.padding(4.dp)) {
                 Button(
                     shape = RectangleShape,
                     onClick = {
                         infoText.add("Clicked ++")
+
                     },
                     modifier = Modifier.weight(2f),
                 ) {
@@ -502,7 +463,10 @@ fun ScaleButton(
 }
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(
+    viewModel: AppSharedViewModel,
+    modifier: Modifier = Modifier
+) {
     var loggedIn by rememberSaveable() { mutableStateOf(false) }
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -570,7 +534,10 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun ProfileScreen(
+    viewModel: AppSharedViewModel,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -580,7 +547,10 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ReloadScreen(modifier: Modifier = Modifier) {
+fun ReloadScreen(
+    viewModel: AppSharedViewModel,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -590,7 +560,10 @@ fun ReloadScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FavouritesScreen(modifier: Modifier = Modifier) {
+fun FavouritesScreen(
+    viewModel: AppSharedViewModel,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -599,12 +572,20 @@ fun FavouritesScreen(modifier: Modifier = Modifier) {
     }
 }
 
+val appViewModel = AppSharedViewModel(application = Application())
+
 @Composable
 fun AppNavHost(
     navController: NavHostController,
     startDestination: AppDestinations,
     modifier: Modifier = Modifier
 ) {
+    //val sharedViewModel: AndroidViewModel = viewModel(
+    //    viewModelStoreOwner = LocalContext.current as ComponentActivity
+    //)
+
+
+
     NavHost(
         navController,
         startDestination = startDestination.route
@@ -612,11 +593,11 @@ fun AppNavHost(
         AppDestinations.entries.forEach { destination ->
             composable(destination.route) {
                 when(destination) {
-                    AppDestinations.HOME -> HomeScreen()
-                    AppDestinations.FAVORITES -> FavouritesScreen()
-                    AppDestinations.LOGIN -> LoginScreen()
-                    AppDestinations.RELOAD -> ReloadScreen()
-                    AppDestinations.PROFILE -> ProfileScreen()
+                    AppDestinations.HOME -> HomeScreen(appViewModel)
+                    AppDestinations.FAVORITES -> FavouritesScreen(appViewModel)
+                    AppDestinations.LOGIN -> LoginScreen(appViewModel)
+                    AppDestinations.RELOAD -> ReloadScreen(appViewModel)
+                    AppDestinations.PROFILE -> ProfileScreen(appViewModel)
                 }
             }
         }
@@ -647,6 +628,8 @@ fun MainTimerApp(modifier: Modifier = Modifier) {
         "Reload" to false)
     }
     */
+
+
 
     Scaffold(modifier = modifier) { contentPadding ->
         PrimaryTabRow(selectedTabIndex = selectedDestination,

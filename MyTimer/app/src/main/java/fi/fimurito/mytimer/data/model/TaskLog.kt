@@ -1,16 +1,12 @@
-package fi.fimurito.mytimer.data
+package fi.fimurito.mytimer.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import fi.fimurito.mytimer.data.MyTypeConverters
+import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZoneId
-
-
-
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 // @Serializable
 @Entity(tableName = "tasklogs")
@@ -26,7 +22,7 @@ class TaskLog(
 ){
     fun getDuration(): Long {
         if (beginDate !== null && endDate !== null) {
-            val duration = java.time.Duration.between(beginDate, endDate)
+            val duration = Duration.between(beginDate, endDate)
             return duration.toMinutes()
         } else {
             return 0L

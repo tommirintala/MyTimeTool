@@ -1,13 +1,8 @@
 package fi.fimurito.mytimer
 
-import androidx.room.Room
-import fi.fimurito.mytimer.data.Task
-import fi.fimurito.mytimer.data.TaskDatabase
+import fi.fimurito.mytimer.data.model.Task
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.withContext
-import javax.sql.DataSource
 
 class TaskLocalDataSource (private val tasksApi: TasksApi,
 private val ioDispatcher: CoroutineDispatcher
