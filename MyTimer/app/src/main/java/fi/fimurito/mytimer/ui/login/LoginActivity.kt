@@ -12,17 +12,31 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
+import fi.fimurito.mytimer.AppContainer
+import fi.fimurito.mytimer.MyApplication
 import fi.fimurito.mytimer.databinding.ActivityLoginBinding
 
 import fi.fimurito.mytimer.R
+import fi.fimurito.mytimer.data.LoginContainer
+import fi.fimurito.mytimer.data.model.LoggedInUser
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
+    //private lateinit var loginData: LoginUserData
+    private lateinit var loginData: LoggedInUser
+    private lateinit var appContainer: AppContainer
     private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        appContainer = (application as MyApplication).appContainer
+
+        appContainer.loginContainer = LoginContainer(appContainer.userRepository)
+
+        loginViewModel = appContainer.loginContainer?.loginViewModelFactory.create()
+        loginData = appContainer.loginContainer?.loginData
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
