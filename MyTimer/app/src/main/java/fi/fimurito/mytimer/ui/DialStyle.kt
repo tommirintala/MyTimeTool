@@ -166,24 +166,24 @@ val ProjectStyle = ClockStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
         ),
-        stepsColor = Color.White.copy(alpha = 0.5f),
+        stepsColor = Color.White.copy(alpha = 0.8f),
         stepsLabelTopPadding = 20.dp
     ),
     minutesDialStyle = DialStyle().copy(
         stepsTextStyle = TextStyle(
-            color = Color.White.copy(alpha = 0.7f),
+            color = Color.White.copy(alpha = 0.8f),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             //fontFamily =
         ),
-        stepsColor = Color.Blue.copy(alpha = 0.5f),
+        stepsColor = Color.White.copy(alpha = 0.8f),
         stepsLabelTopPadding = 20.dp
     ),
     hourLabelStyle = TextStyle(
-        color = Color.White.copy(alpha = 0.4f),
+        color = Color.White.copy(alpha = 0.8f),
         fontSize = 60.sp,
         fontWeight = FontWeight.Bold,
     ),
-    overlayStrokeColor = Color.White,
+    overlayStrokeColor = Color.Red,
     overlayStrokeWidth = 4.dp,
 )

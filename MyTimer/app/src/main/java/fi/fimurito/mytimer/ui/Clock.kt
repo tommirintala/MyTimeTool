@@ -5,7 +5,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.text.rememberTextMeasurer
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 
 
 import androidx.compose.runtime.getValue
@@ -37,7 +39,8 @@ private const val TAG = "TimerClock"
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun TimerClock(
-    modifier: Modifier =  Modifier.size(340.dp),
+    modifier: Modifier =  Modifier
+        .size(340.dp),
     clockStyle: ClockStyle = ClockStyle()
 ) {
     val textMeasurer = rememberTextMeasurer()
@@ -90,6 +93,9 @@ fun TimerClock(
     ) {
         val outerRadius = minOf(this.size.width, this.size.height) / 2f
         val innerRadius = outerRadius - 60.dp.toPx()
+
+        drawCircle(Color.Black, outerRadius, this.center, 0.8f)
+        drawCircle(Color.DarkGray, innerRadius, this.center, alpha = 0.8f)
 
         //Seconds Dial
         dial(
