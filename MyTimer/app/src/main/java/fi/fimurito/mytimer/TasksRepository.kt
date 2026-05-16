@@ -31,9 +31,9 @@ class TasksRepository(
     }
      */
 
-    suspend fun switch(taskId: Long): Result<Task> {
-
-    }
+    //suspend fun switch(taskId: Long): Result<Task> {
+    //    return Result()
+    //}
 
     suspend fun getLatestTasks(refresh: Boolean = false): List<Task> {
         return if (refresh) {

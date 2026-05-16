@@ -14,6 +14,7 @@ class TaskViewModel(private val tasksRepository: TasksRepository): ViewModel() {
     val taskResult: LiveData<TaskResult> = _taskResult
 
     fun start(taskId: Long) {
+        /*
         val result = tasksRepository.switch(taskId)
 
         if (result is Result.Success) {
@@ -21,5 +22,7 @@ class TaskViewModel(private val tasksRepository: TasksRepository): ViewModel() {
         } else {
             _taskResult.value = TaskResult(error = "Task switch failed")
         }
+
+         */
     }
 }

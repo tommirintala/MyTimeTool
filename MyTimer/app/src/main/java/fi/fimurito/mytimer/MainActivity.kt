@@ -3,12 +3,16 @@ package fi.fimurito.mytimer
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import android.window.SplashScreen
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 
 
 import androidx.compose.foundation.border
@@ -91,6 +95,7 @@ import kotlinx.coroutines.launch
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.InteractionSource
@@ -100,15 +105,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextObfuscationMode
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DisplayMode
 //import androidx.compose.material.icons.Icons
 //import androidx.compose.material.icons.filled.ShoppingCart
 //import androidx.compose.material.ripple
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -120,18 +133,29 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.PreviewParameter
 
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
 import fi.fimurito.mytimer.ui.ProjectStyle
 import fi.fimurito.mytimer.ui.TimerClock
+import kotlinx.serialization.Serializable
+import org.intellij.lang.annotations.JdkConstants
+import java.time.LocalDate
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
 
+    private val mainViewModel by viewModels<MainViewModel>()
     private val _lastTask = MutableLiveData<Task>()
     val lastTask: LiveData<Task> = _lastTask
 
+    /*
     fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
         val appContext = context.applicationContext
         val dbFile = appContext.getDatabasePath(getString(R.string.app_database_name))
@@ -151,22 +175,56 @@ class MainActivity : ComponentActivity() {
     }
 
     lateinit var db: AppDatabase
-
+*/
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(logPrefix, "Loading app")
 
-        db = getRoomDatabase(getDatabaseBuilder(applicationContext))
+
+
+        //db = getRoomDatabase(getDatabaseBuilder(applicationContext))
         //taskHandler = TaskHandler()
 
 
         enableEdgeToEdge()
         setContent {
+            val tasks = mainViewModel.taskPager.collectAsLazyPagingItems()
+            val valid by mainViewModel.valid.collectAsState()
+            val navController = rememberNavController()
+            val context = LocalContext.current
             MyTimerTheme(dynamicColor = false) {
                 //MyTimerApp()
-                MainTimerApp()
+                //MainTimerApp()
+                //AppScreen()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "splash"
+                ) {
+                    composable(route = "splash") {
+                        SplashScreen(
+                            valid = valid,
+                            onStart = mainViewModel::trackSplashScreenStarted,
+                            onSplashEndedValid = {
+                                navController.navigate("main") {
+                                    popUpTo("splash") { inclusive = true}
+                                }
+                            },
+                            onSplashEndedInvalid = {
+                                Toast.makeText(
+                                    context,
+                                    "Something went horribly wrong...",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        )
+                    }
+                    composable(route = "main") {
+                        MainScreen(tasks = tasks, mainViewModel = mainViewModel)
+                    }
+                }
             }
         }
     }
@@ -234,13 +292,14 @@ val currentItem = TaskHandler()
 
 
 
-@Preview(showBackground = true)
-@Preview(
-    name = "Medium Phone",
-    device= "spec:width=412dp,height=915dp,dpi=420",
-    showSystemUi=true)
+
+//@PreviewParameter(
+//    name = "Medium Phone",
+//    device= "spec:width=412dp,height=915dp,dpi=420",
+//    showSystemUi=true)
+//@Preview(showBackground = true)
 @Composable
-fun HomeScreen(viewModel: AppSharedViewModel,
+fun HomeScreen(/*viewModel: AppSharedViewModel,*/
                modifier: Modifier = Modifier) {
     val taskFieldState = rememberTextFieldState()
     val items = listOf(
@@ -267,30 +326,35 @@ fun HomeScreen(viewModel: AppSharedViewModel,
 
 
 
-    Box(
+    /*Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
-
     ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
+*/
+        Column(modifier = Modifier,
+            //.fillMaxWidth()
+            //.padding(top = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            //verticalArrangement = Arrangement.Center
+                ) {
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Text("Current date/time")
+            //Row(modifier = Modifier.fillMaxWidth(),
+              //  horizontalArrangement = Arrangement.Center) {
+                //Text("Current date/time")
                 TimerClock(
+                    modifier = Modifier.size(340.dp)
+                        .padding(20.dp),
+
                     clockStyle = ProjectStyle,
                 )
-            }
+            //}
 
             Row {
                 Text("Current Task:",
                     modifier = Modifier.weight(2f)
                 )
                 Text(
-                    text = viewModel.getTaskTitle(),
+                    text = "(task title)"/*viewModel.getTaskTitle(),*/,
                     modifier = Modifier.weight(2f),
                 )
             }
@@ -299,7 +363,7 @@ fun HomeScreen(viewModel: AppSharedViewModel,
                 Text("Start time:",
                     modifier = Modifier.weight(2f))
 
-                Text(text=viewModel.getStartTime(),
+                Text(text="(start time)" /*viewModel.getStartTime()*/,
                     modifier = Modifier.weight(2f)
                 )
             }
@@ -307,7 +371,7 @@ fun HomeScreen(viewModel: AppSharedViewModel,
             Row {
                 Text("End time:",
                     modifier = Modifier.weight(2f))
-                Text(text = viewModel.getEndTime(),
+                Text(text = "(end time)" /*viewModel.getEndTime()*/,
                     modifier = Modifier.weight(2f))
             }
             Row(modifier = Modifier.padding(4.dp)) {
@@ -363,6 +427,8 @@ fun HomeScreen(viewModel: AppSharedViewModel,
 
                 )
             }
+
+            //TaskEditor()
             /*
             Row {
 
@@ -390,7 +456,9 @@ fun HomeScreen(viewModel: AppSharedViewModel,
             //}
         }
     }
-}
+//}
+
+
 
 private class ScaleNode(private val interactionSource: InteractionSource): Modifier.Node(),
     DrawModifierNode {
@@ -464,7 +532,7 @@ fun ScaleButton(
 
 @Composable
 fun LoginScreen(
-    viewModel: AppSharedViewModel,
+    /*viewModel: AppSharedViewModel,*/
     modifier: Modifier = Modifier
 ) {
     var loggedIn by rememberSaveable() { mutableStateOf(false) }
@@ -535,7 +603,7 @@ fun LoginScreen(
 
 @Composable
 fun ProfileScreen(
-    viewModel: AppSharedViewModel,
+    /*viewModel: AppSharedViewModel,*/
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -548,7 +616,7 @@ fun ProfileScreen(
 
 @Composable
 fun ReloadScreen(
-    viewModel: AppSharedViewModel,
+    /*viewModel: AppSharedViewModel,*/
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -561,7 +629,7 @@ fun ReloadScreen(
 
 @Composable
 fun FavouritesScreen(
-    viewModel: AppSharedViewModel,
+    /*viewModel: AppSharedViewModel,*/
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -572,7 +640,41 @@ fun FavouritesScreen(
     }
 }
 
-val appViewModel = AppSharedViewModel(application = Application())
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TaskEditor(
+    viewModel: AppSharedViewModel,
+    modifier: Modifier = Modifier
+) {
+    val datePickerStateFrom = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+    val datePickerStateTo = rememberDatePickerState(initialDisplayMode = DisplayMode.Picker)
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Row() {
+            Text(stringResource(R.string.label_task))
+
+        }
+        Row() {
+            Text(stringResource(R.string.label_task_set_hours))
+        }
+        Row() {
+            Text(stringResource(R.string.label_task_max_hours))
+        }
+        Row() {
+            Text(stringResource(R.string.label_active_from))
+            DatePicker(state = datePickerStateFrom)
+        }
+        Row() {
+            Text(stringResource(R.string.label_active_to))
+            DatePicker(state = datePickerStateTo)
+        }
+    }
+}
+
+
 
 @Composable
 fun AppNavHost(
@@ -584,6 +686,7 @@ fun AppNavHost(
     //    viewModelStoreOwner = LocalContext.current as ComponentActivity
     //)
 
+    //val appViewModel = AppSharedViewModel(application = Application())
 
 
     NavHost(
@@ -593,11 +696,11 @@ fun AppNavHost(
         AppDestinations.entries.forEach { destination ->
             composable(destination.route) {
                 when(destination) {
-                    AppDestinations.HOME -> HomeScreen(appViewModel)
-                    AppDestinations.FAVORITES -> FavouritesScreen(appViewModel)
-                    AppDestinations.LOGIN -> LoginScreen(appViewModel)
-                    AppDestinations.RELOAD -> ReloadScreen(appViewModel)
-                    AppDestinations.PROFILE -> ProfileScreen(appViewModel)
+                    AppDestinations.HOME -> HomeScreen(/* appViewModel */)
+                    AppDestinations.FAVORITES -> FavouritesScreen(/*appViewModel*/)
+                    AppDestinations.LOGIN -> LoginScreen(/*appViewModel*/)
+                    AppDestinations.RELOAD -> ReloadScreen(/*appViewModel*/)
+                    AppDestinations.PROFILE -> ProfileScreen(/*appViewModel*/)
                 }
             }
         }
@@ -613,6 +716,7 @@ val tabEnabled =  mutableStateMapOf(
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreenSizes
 @Composable
 fun MainTimerApp(modifier: Modifier = Modifier) {
@@ -655,13 +759,148 @@ fun MainTimerApp(modifier: Modifier = Modifier) {
                         contentDescription = destination.contentDescription
                         )
                     },
-                    //selectedContentColor = MaterialTheme.colorScheme.primary,
-                    //unselectedContentColor = MaterialTheme.colorScheme.secondary,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.secondary,
+
                 )
             }
+            AppNavHost(navController, startDestination,
+                modifier = Modifier.padding(contentPadding))
         }
-        AppNavHost(navController, startDestination)
+
+
+
     }
+
+    /*
+    Scaffold(
+        topBar = {
+            topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                )
+            AppNavHost(navController, startDestination)
+        },
+        bottomBar = {},
+        floatingActionButton = {}
+    ) { innerPadding ->
+
+    }
+    */
+}
+
+/*
+@Serializable
+sealed class Destiny(
+    val hasTopBar: Boolean,
+    val hasBottomBar: Boolean,
+    val title: String = ""
+) {
+    @Serializable
+    data object Splash: Destiny(false, false)
+
+    @Serializable
+    data object Home: Destiny(true, true, "Home")
+
+    @Serializable
+    data object Login: Destiny(false, true, "Login")
+
+    @Serializable
+    data object Sync: Destiny(true, false, "Sync")
+}
+*/
+
+@Composable
+fun SplashScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(painter = painterResource(R.drawable.ic_home),
+            contentDescription = null,
+            modifier = Modifier.size(100.dp))
+    }
+}
+
+@Composable
+fun AppGraph(
+    modifier: Modifier = Modifier,
+    controller: NavHostController = rememberNavController()
+) {
+    NavHost(
+        modifier = modifier,
+        navController = controller,
+        startDestination = Destiny.Splash
+    ) {
+        composable<Destiny.Splash> {
+            SplashScreen()
+        }
+        composable<Destiny.Home> {
+            HomeScreen()
+        }
+        composable<Destiny.Login> {
+            LoginScreen()
+        }
+        composable<Destiny.Sync> {
+            SyncScreen()
+        }
+    }
+}
+
+fun NavBackStackEntry?.getDestiny(): Destiny? {
+    return this?.let {
+        when {
+            destination.hasRoute(Destiny.Splash::class) -> Destiny.Splash
+            destination.hasRoute(Destiny.Home::class) -> Destiny.Home
+            destination.hasRoute(Destiny.Login::class) -> Destiny.Login
+            destination.hasRoute(Destiny.Sync::class) -> Destiny.Sync
+            else -> null
+        }
+    }
+}
+
+@Composable
+fun HomeTopBar(modifier: Modifier = Modifier) {
+    Text("HomeTopBar")
+}
+@Composable
+fun SyncTopBar() {
+    Text("SyncTopBar")
+}
+
+@Composable
+fun LoginTopBar() {
+    Text("LoginTopBar")
+}
+@Composable
+fun SyncScreen() {
+    Text("Sync Screen")
+}
+@Composable
+fun DynamicTopBar(navController: NavController) {
+    val entry by navController.currentBackStackEntryAsState()
+    val curDest = entry?.getDestiny()
+
+    if (curDest?.hasTopBar ?: false) {
+        when (curDest) {
+            Destiny.Home -> HomeTopBar()
+            Destiny.Sync -> SyncTopBar()
+            Destiny.Login -> LoginTopBar()
+            else -> HomeTopBar()
+        }
+    }
+}
+
+@Composable
+fun AppScreen() {
+    val navController = rememberNavController()
+    Scaffold(
+        topBar = { DynamicTopBar(navController)},
+        content = { padding ->
+            AppGraph(modifier = Modifier.padding(padding), navController)
+        }
+    )
 }
 
 @PreviewScreenSizes

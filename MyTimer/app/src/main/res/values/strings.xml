@@ -20,6 +20,10 @@
     <string name="label_login">Login</string>
     <string name="label_logout">Logout</string>
     <string name="label_password">Password</string>
+    <string name="label_active_from">Active from</string>
+    <string name="label_active_to">Active to</string>
+    <string name="label_task_max_hours">Max hours</string>
+    <string name="label_task_set_hours">Given hours</string>
 
     <string name="tab_label_home">Home</string>
     <string name="tab_label_favourites">Favourites</string>

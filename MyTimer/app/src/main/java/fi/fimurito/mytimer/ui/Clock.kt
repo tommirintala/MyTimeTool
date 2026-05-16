@@ -39,8 +39,7 @@ private const val TAG = "TimerClock"
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun TimerClock(
-    modifier: Modifier =  Modifier
-        .size(340.dp),
+    modifier: Modifier =  Modifier,
     clockStyle: ClockStyle = ClockStyle()
 ) {
     val textMeasurer = rememberTextMeasurer()
@@ -89,7 +88,7 @@ fun TimerClock(
     }
 
     Canvas(
-        modifier = modifier
+        modifier = modifier.background(Color.LightGray)
     ) {
         val outerRadius = minOf(this.size.width, this.size.height) / 2f
         val innerRadius = outerRadius - 60.dp.toPx()

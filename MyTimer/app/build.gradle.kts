@@ -6,6 +6,7 @@ plugins {
     // id("com.google.devtools.ksp")
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+
 }
 
 android {
@@ -90,6 +91,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.ui.text.google.fonts)
+    implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
@@ -110,6 +112,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
 
 
 

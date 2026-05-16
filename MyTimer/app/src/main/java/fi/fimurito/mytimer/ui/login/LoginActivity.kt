@@ -33,10 +33,10 @@ class LoginActivity : AppCompatActivity() {
 
         appContainer = (application as MyApplication).appContainer
 
-        appContainer.loginContainer = LoginContainer(appContainer.userRepository)
+        //appContainer.loginContainer = LoginContainer(appContainer.userRepository)
 
-        loginViewModel = appContainer.loginContainer?.loginViewModelFactory.create()
-        loginData = appContainer.loginContainer?.loginData
+        //loginViewModel = appContainer.loginContainer?.loginViewModelFactory.create()
+        //loginData = appContainer.loginContainer?.loginData
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)

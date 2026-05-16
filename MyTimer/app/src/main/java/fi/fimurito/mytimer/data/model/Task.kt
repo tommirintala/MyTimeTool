@@ -13,6 +13,8 @@ data class Task(
     @ColumnInfo(name="code") val code: String = "",
     @ColumnInfo(name="abbr") val abbr: String = "",
     @ColumnInfo(name="title") val title: String = "Task",
+    @ColumnInfo(name="max_hours") var maxHours: Float = 0f,
+    @ColumnInfo(name="set_hours") var setHours: Float = 0f,
     @ColumnInfo(name="created_at") val creationTime: LocalDateTime = LocalDateTime.now(),
     @ColumnInfo(name="modified_at") val modificationTime: LocalDateTime = LocalDateTime.now(),
     @ColumnInfo(name="beginTime") val beginTime: LocalDateTime? = null,

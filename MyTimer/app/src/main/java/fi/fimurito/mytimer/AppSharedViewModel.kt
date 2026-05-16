@@ -3,6 +3,7 @@ package fi.fimurito.mytimer
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
@@ -21,10 +22,11 @@ data class MyUiState (
             val data: String = ""
 )
 class AppSharedViewModel(application: Application) : AndroidViewModel(application) {
-    private var context: Context
+    //private var context: Context
+
 
     init {
-        context = application.applicationContext
+        //context = application.applicationContext
         openDB()
     }
 
@@ -54,7 +56,7 @@ class AppSharedViewModel(application: Application) : AndroidViewModel(applicatio
     lateinit var taskLogDao: TaskLogDao
 
     fun openDB() {
-        db = getRoomDatabase(getDatabaseBuilder(context))
+        db = getRoomDatabase(getDatabaseBuilder(application.applicationContext))
         taskDao = db.taskDao()
         taskLogDao = db.taskLogDao()
     }
