@@ -95,7 +95,7 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
-    //implementation(libs.org.jetbrains.kotlin.plugin.serialization.gradle.plugin)
+    implementation(libs.org.jetbrains.kotlin.plugin.serialization.gradle.plugin)
     implementation(libs.kotlinx.serialization.json)
     //implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.compiler)
