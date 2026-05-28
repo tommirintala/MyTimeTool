@@ -1,13 +1,10 @@
 package fi.fimurito.mytimer
 
 
-import android.app.Application
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import android.window.SplashScreen
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -81,13 +78,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import fi.fimurito.mytimer.data.model.Task
-import fi.fimurito.mytimer.data.AppDatabase
 import fi.fimurito.mytimer.ui.theme.MyTimerTheme
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -111,14 +103,11 @@ import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DisplayMode
 //import androidx.compose.material.icons.Icons
 //import androidx.compose.material.icons.filled.ShoppingCart
 //import androidx.compose.material.ripple
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -135,7 +124,6 @@ import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.PreviewParameter
 
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
@@ -144,9 +132,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import fi.fimurito.mytimer.ui.ProjectStyle
 import fi.fimurito.mytimer.ui.TimerClock
-import kotlinx.serialization.Serializable
-import org.intellij.lang.annotations.JdkConstants
-import java.time.LocalDate
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
@@ -811,7 +796,7 @@ sealed class Destiny(
 */
 
 @Composable
-fun SplashScreen(modifier: Modifier = Modifier) {
+fun SplashScreen(modifier: Modifier = Modifier, onStart: () -> Unit, valid: Boolean?) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

@@ -22,7 +22,7 @@ import fi.fimurito.mytimer.R
 import fi.fimurito.mytimer.ui.theme.MyTimerTheme
 
 @Composable
-fun MainScreen(tasks: LazyPagingItems<Task>, mainViewModel, modifier: Modifier = Modifier) {
+fun MainScreen(tasks: LazyPagingItems<Task>, mainViewModel: MainViewModel, modifier: Modifier = Modifier) {
     val focusManager = LocalFocusManager.current
 
     Scaffold(topBar = {

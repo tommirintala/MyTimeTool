@@ -12,11 +12,11 @@ import java.time.LocalDateTime
 data class Task(
     @PrimaryKey private val id: Long? = null,
     @ColumnInfo val remoteId: Long = 0L,
-    @ColumnInfo(name="etag") val etag: String? = null,
-    @ColumnInfo(name="task_info") val taskInfo: TaskInfo? = TaskInfo(),
-    @ColumnInfo(name="code") val code: String = "",
-    @ColumnInfo(name="abbr") val abbr: String = "",
-    @ColumnInfo(name="title") val title: String = "Task",
+    @ColumnInfo(name="etags") val strTags: String = "",
+    // @ColumnInfo(name="task_info") val taskInfo: TaskInfo? = null,
+    @ColumnInfo(name="code") val strCode: String = "",
+    @ColumnInfo(name="abbr") val strAbbreviation: String = "",
+    @ColumnInfo(name="title") val strTitle: String = "Task",
     @ColumnInfo(name="max_hours") var maxHours: Float = 0f,
     @ColumnInfo(name="set_hours") var setHours: Float = 0f,
 
@@ -43,3 +43,11 @@ data class Task(
         return result
     }
 }
+
+
+@Serializable
+@Entity(tableName = "taskinfos")
+data class TaskInfo(
+    @PrimaryKey val id: Long,
+    @ColumnInfo(name="imageLinks") val imageLinks: ImageLinks? = ImageLinks()
+)
