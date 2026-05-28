@@ -1,15 +1,15 @@
 package fi.fimurito.mytimer
 
 
-import android.os.Build
+//import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+//import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
+//import androidx.annotation.RequiresApi
 
 
 import androidx.compose.foundation.border
@@ -37,19 +37,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.PrimaryTabRow
+//import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults.InputField
-import androidx.compose.material3.Tab
+//import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.GoogleFont
-import androidx.compose.ui.text.style.TextOverflow
+//import androidx.compose.ui.text.googlefonts.GoogleFont
+//import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+//import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -67,7 +67,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+//import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -96,22 +96,40 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextObfuscationMode
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.IconButton
 //import androidx.compose.material.icons.Icons
 //import androidx.compose.material.icons.filled.ShoppingCart
 //import androidx.compose.material.ripple
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateMapOf
+//import androidx.compose.runtime.collectAsState
+//import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
+//import androidx.compose.runtime.mutableStateMapOf
+//import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -122,16 +140,20 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
-import androidx.compose.ui.platform.LocalContext
+//import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.room.PrimaryKey
+//import androidx.navigation.NavBackStackEntry
+//import androidx.navigation.NavController
+//import androidx.navigation.NavDestination.Companion.hasRoute
+//import androidx.navigation.compose.currentBackStackEntryAsState
+//import fi.fimurito.mytimer.ui.MainScreen
 import fi.fimurito.mytimer.ui.ProjectStyle
 import fi.fimurito.mytimer.ui.TimerClock
+import java.time.Instant
+import java.time.ZoneId
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
@@ -175,6 +197,10 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
+            MyTimerTheme(dynamicColor = false) {
+                NavigationUI()
+            }
+            /*
             val tasks = mainViewModel.taskPager.collectAsLazyPagingItems()
             val valid by mainViewModel.valid.collectAsState()
             val navController = rememberNavController()
@@ -210,10 +236,12 @@ class MainActivity : ComponentActivity() {
                         MainScreen(tasks = tasks, mainViewModel = mainViewModel)
                     }
                 }
+
+             */
             }
         }
     }
-}
+
 /*
 class MyTask
 {
@@ -241,11 +269,14 @@ val displayLargeFontFamily =
     )
 */
 
+/*
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
+
+ */
 
 /*
 private val DarkColors = darkColors(
@@ -515,9 +546,10 @@ fun ScaleButton(
     )
 }
 
+
+/*
 @Composable
 fun LoginScreen(
-    /*viewModel: AppSharedViewModel,*/
     modifier: Modifier = Modifier
 ) {
     var loggedIn by rememberSaveable() { mutableStateOf(false) }
@@ -585,6 +617,8 @@ fun LoginScreen(
     }
 }
 
+ */
+
 
 @Composable
 fun ProfileScreen(
@@ -625,6 +659,7 @@ fun FavouritesScreen(
     }
 }
 
+/*
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -659,8 +694,10 @@ fun TaskEditor(
     }
 }
 
+ */
 
 
+/*
 @Composable
 fun AppNavHost(
     navController: NavHostController,
@@ -692,15 +729,19 @@ fun AppNavHost(
     }
 }
 
+ */
+
+/*
 val tabEnabled =  mutableStateMapOf(
     "HOME" to true,
     "Fav" to true,
     "Profile" to true,
     "Login" to true,
     "Reload" to false)
+*/
 
 
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreenSizes
 @Composable
@@ -757,6 +798,8 @@ fun MainTimerApp(modifier: Modifier = Modifier) {
 
     }
 
+
+ */
     /*
     Scaffold(
         topBar = {
@@ -772,7 +815,23 @@ fun MainTimerApp(modifier: Modifier = Modifier) {
 
     }
     */
+/*
 }
+
+ */
+
+
+enum class Destination(
+    val route: String,
+    val label: String,
+    val icon: ImageVector,
+    val contentDescription: String
+) {
+    MAIN("main", "Main", Icons.Default.Home, "Main"),
+    TASKS("tasks", "Tasks", Icons.Default.Add, "Tasks"),
+    SETUP("setup", "Setup", Icons.Default.Settings, "Settings")
+}
+
 
 /*
 @Serializable
@@ -808,6 +867,7 @@ fun SplashScreen(modifier: Modifier = Modifier, onStart: () -> Unit, valid: Bool
     }
 }
 
+/*
 @Composable
 fun AppGraph(
     modifier: Modifier = Modifier,
@@ -833,6 +893,9 @@ fun AppGraph(
     }
 }
 
+ */
+
+/*
 fun NavBackStackEntry?.getDestiny(): Destiny? {
     return this?.let {
         when {
@@ -844,6 +907,8 @@ fun NavBackStackEntry?.getDestiny(): Destiny? {
         }
     }
 }
+
+ */
 
 @Composable
 fun HomeTopBar(modifier: Modifier = Modifier) {
@@ -862,6 +927,7 @@ fun LoginTopBar() {
 fun SyncScreen() {
     Text("Sync Screen")
 }
+/*
 @Composable
 fun DynamicTopBar(navController: NavController) {
     val entry by navController.currentBackStackEntryAsState()
@@ -877,6 +943,9 @@ fun DynamicTopBar(navController: NavController) {
     }
 }
 
+ */
+
+/*
 @Composable
 fun AppScreen() {
     val navController = rememberNavController()
@@ -888,6 +957,9 @@ fun AppScreen() {
     )
 }
 
+ */
+
+/*
 @PreviewScreenSizes
 @Composable
 fun MyTimerApp() {
@@ -929,6 +1001,10 @@ fun MyTimerApp() {
 
 }
 
+
+ */
+
+/*
 enum class AppDestinations(
 
     val label: String,
@@ -942,6 +1018,9 @@ enum class AppDestinations(
     LOGIN("Login", R.drawable.ic_login, "login", "Login"),
     RELOAD("Reload", R.drawable.ic_reload, "reload", "Reload"),
 }
+
+
+ */
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -1284,4 +1363,396 @@ fun PasswordTextField() {
             }
         }
     )
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NavigationUI() {
+    val navController = rememberNavController()
+    val startDestination = Destination.MAIN
+    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                ),
+                title = { Text("MyTimer") }
+            )
+        },
+        floatingActionButton = {},
+        bottomBar = {
+            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.secondary) {
+                Destination.entries.forEachIndexed { index, destination ->
+                    NavigationBarItem(
+                        selected = selectedDestination == index,
+                        onClick = {
+                            navController.navigate(route = destination.route)
+                            selectedDestination = index
+                        },
+                        icon = {
+                            Icon(
+                                destination.icon,
+                                contentDescription = destination.contentDescription
+                            )
+                        },
+                        label = { Text(destination.label) }
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        AppNavHost(navController, startDestination, modifier = Modifier.padding(innerPadding))
+    }
+}
+
+@Composable
+fun AppNavHost(
+    navController: NavHostController,
+    startDestination: Destination,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController,
+        startDestination = startDestination.route,
+        modifier = modifier
+    ) {
+        Destination.entries.forEach { destination ->
+            composable(destination.route) {
+                when (destination) {
+                    Destination.MAIN -> MainScreen()
+                    Destination.TASKS -> TaskScreen()
+                    Destination.SETUP -> SetupScreen()
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreen(modifier: Modifier = Modifier) {
+    //SimpleDBUITheme {
+    Column(modifier = modifier.fillMaxSize() ) {
+        Greeting(
+            name = "Android"
+        )
+
+        TaskSelector(
+            modifier = Modifier
+                .weight(0.8f)
+        )
+        //TaskDetails(
+        //    modifier = Modifier
+        //        .weight(0.8f)
+        //)
+        Spacer(modifier = Modifier.height(10.dp))
+        Row {
+            Button(
+                onClick = {},
+                shape = RectangleShape,
+                modifier = Modifier
+                    .padding(2.dp)
+                    .weight(0.3f)
+            ) { Text("++")
+            }
+            Button(
+                onClick = {},
+                shape = RectangleShape,
+                modifier = Modifier
+                    .padding(2.dp)
+                    .weight(0.3f)
+            ) { Text("Complete")
+            }
+            Button(
+                onClick = {},
+                shape = RectangleShape,
+                modifier = Modifier.padding(2.dp)
+                    .weight(0.3f)
+            ) {
+                Text("Switch")
+            }
+
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+    //}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SetupScreen(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Setup")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TaskScreen(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Tasks")
+        TaskDetails()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TaskDetails(
+    modifier: Modifier = Modifier,
+    tid: Long = -1,
+    title: String = "N/A"
+) {
+    var mId by remember { mutableLongStateOf(tid) }
+    var mTitle by remember { mutableStateOf("") }
+    var mBegin by remember { mutableStateOf<Long?>(null) }
+    var mEnd by remember { mutableStateOf<Long?>(null) }
+    var mMaxHours by remember { mutableFloatStateOf(40f) }
+    var mCode by remember { mutableStateOf("") }
+
+    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+        Text(
+            title,
+            Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+        )
+        Row(modifier = Modifier.padding(top = 4.dp)) {
+            Text("Id: #", Modifier.weight(0.4f))
+            Text("$mId", Modifier.weight(0.4f))
+        }
+        Row {
+            OutlinedTextField(
+                value = mTitle,
+                onValueChange = { mTitle = it },
+                modifier = Modifier
+                    .weight(0.4f),
+                label = { Text("Task Title") },
+                singleLine = true
+            )
+            OutlinedTextField(
+                value = mCode,
+                onValueChange = { mCode = it },
+                modifier = Modifier
+                    .weight(0.4f),
+                label = { Text("Code") },
+            )
+        }
+        Column {
+            Text("Date Range:")
+
+            CustomDatePicker(
+                modifier = Modifier.fillMaxWidth(),
+                onDateSelected = { mBegin = it },
+                onDismiss = {},
+                label = "Begin date"
+            )
+
+            CustomDatePicker(
+                modifier = Modifier.fillMaxWidth(),
+                onDateSelected = { mEnd = it },
+                onDismiss = {},
+                label = "End date"
+            )
+        }
+        Row {
+            OutlinedTextField(
+                value = if (mMaxHours == 0f) "" else mMaxHours.toInt().toString(),
+                onValueChange = { input ->
+                    if (input.length <= 4 && (input.isEmpty() || input.all { it.isDigit() })) {
+                        mMaxHours = input.toFloatOrNull() ?: 0f
+                    }
+                },
+                singleLine = true,
+                label = { Text("Max hours") },
+                modifier = Modifier.fillMaxWidth(0.4f)
+            )
+
+        }
+        Row {
+            Button(
+                onClick = {},
+                shape = RectangleShape,
+                modifier = Modifier
+                    .weight(0.25f)
+                    .padding(1.dp),
+            ) {
+                Text("Prev")
+            }
+            Button(
+                onClick = {},
+                shape = RectangleShape,
+                modifier = Modifier
+                    .weight(0.25f)
+                    .padding(1.dp)
+            ) {
+                Text("New")
+            }
+            Button(
+                onClick = {},
+                shape = RectangleShape,
+                modifier = Modifier
+                    .weight(0.25f)
+                    .padding(1.dp)
+            ) {
+                Text("Save")
+            }
+            Button(
+                onClick = {},
+                shape = RectangleShape,
+                modifier = Modifier
+                    .weight(0.25f)
+                    .padding(1.dp)
+            ) {
+                Text("Next")
+            }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomDatePicker(
+    modifier: Modifier = Modifier,
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit,
+    label: String = "Select date"
+) {
+    val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+    var showDatePicker by remember { mutableStateOf(false) }
+
+
+    val selectedDateText = remember(datePickerState.selectedDateMillis) {
+        datePickerState.selectedDateMillis?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate().toString()
+        } ?: ""
+    }
+
+    Box(modifier = modifier) {
+        OutlinedTextField(
+            value = selectedDateText,
+            onValueChange = {},
+            label = { Text(label) },
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select date"
+                    )
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+        )
+        if (showDatePicker) {
+            DatePickerDialog(
+                onDismissRequest = {
+                    showDatePicker = false
+                    onDismiss()
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onDateSelected(datePickerState.selectedDateMillis)
+                            showDatePicker = false
+                            onDismiss()
+                        }
+                    ) {
+                        Text("Ok")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showDatePicker = false
+                            onDismiss()
+                        }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+    }
+
+}
+
+
+data class Elem (
+    @PrimaryKey val primaryKey: Long,
+    val title: String
+)
+
+@Composable
+fun TaskSelector(
+    modifier: Modifier = Modifier
+) {
+    val tasks = listOf<Elem>(
+        Elem(1L, "Task #1"),
+        Elem(2L, "Task #2"),
+        Elem(42L, "Task #42")
+    )
+    val items = listOf(
+        "Task 1", "Task 2", "Task 3"
+    )
+    var expanded by remember { mutableStateOf(false) }
+    var selectedItem by remember { mutableStateOf(items[0]) }
+    var taskRunning by remember { mutableStateOf(false)}
+
+    // Main Dropdown UI
+    Column(modifier) {
+        Row {
+            Text(text = "Current task: $selectedItem")
+            Text(text = "Running: " + if (taskRunning) "Yes" else "No")
+        }
+        OutlinedTextField(
+            value = selectedItem,
+            onValueChange = {},
+            modifier = Modifier.fillMaxWidth(),
+            readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        contentDescription = "Select Task"
+                    )
+                }
+            }
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+            }
+        ) {
+            items.forEach { item ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedItem = item
+                        expanded = false
+                    },
+                    text = { Text(text = item) })
+            }
+        }
+    }
 }

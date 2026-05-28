@@ -1,5 +1,9 @@
 package fi.fimurito.mytimer.data.model
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -11,14 +15,16 @@ import java.time.LocalDateTime
 @Entity(tableName = "tasks")
 data class Task(
     @PrimaryKey private val id: Long? = null,
-    @ColumnInfo val remoteId: Long = 0L,
-    @ColumnInfo(name="etags") val strTags: String = "",
+    @ColumnInfo val remoteId: Long = -1L,
+    @ColumnInfo(name="title") val title: String = "Task",
+    @ColumnInfo(name="etags") val tags: String = "",
     // @ColumnInfo(name="task_info") val taskInfo: TaskInfo? = null,
-    @ColumnInfo(name="code") val strCode: String = "",
-    @ColumnInfo(name="abbr") val strAbbreviation: String = "",
-    @ColumnInfo(name="title") val strTitle: String = "Task",
+    @ColumnInfo(name="code") val code: String = "",
+    @ColumnInfo(name="abbr") val abbr: String = "",
+
     @ColumnInfo(name="max_hours") var maxHours: Float = 0f,
     @ColumnInfo(name="set_hours") var setHours: Float = 0f,
+    @ColumnInfo(name="task_type") var taskType: TaskType = TaskType.TASKTYPE_SINGLETASK,
 
     @ColumnInfo(name="created_at") val creationTime: LocalDateTime = LocalDateTime.now(),
     @ColumnInfo(name="modified_at") val modificationTime: LocalDateTime = LocalDateTime.now(),
@@ -44,6 +50,19 @@ data class Task(
     }
 }
 
+
+
+enum class TaskType(
+    val label: String,
+    val icon: ImageVector,
+    val link: String
+) {
+    TASKTYPE_SINGLETASK("Single task", Icons.Default.Place, ""),
+    TASKTYPE_COURSE("Course", Icons.Default.Person, ""),
+    //TASKTYPE_RECURRING_WEEKLY(),
+    //TASKTYPE_RECURRING_MONTHLY(),
+    //TASKTYPE_RECURRING_DAILY()
+}
 
 @Serializable
 @Entity(tableName = "taskinfos")

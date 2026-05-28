@@ -3,7 +3,7 @@ package fi.fimurito.mytimer.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.core.R
+
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +23,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.remember
+import fi.fimurito.mytimer.R
 import fi.fimurito.mytimer.data.model.Task
 
 @Composable
@@ -41,7 +42,7 @@ fun TaskRunner(modifier: Modifier = Modifier) {
     }
     Column() {
         Row() {
-            Text(stringResource(R.string.label_started))
+            Text(stringResource(R.string.label_date_begin))
             Text("?Begin")
         }
     }

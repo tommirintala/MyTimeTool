@@ -16,12 +16,12 @@ class TaskPagingSource(
             val response = repo.getTasks(query, nextPageNumber, params.loadSize)
 
             LoadResult.Page(
-                data = response.items,
-                prevKey = params.prevKey(),
-                nextKey = params.nextKey(response.totalItems)
+                data = response,
+                prevKey = if (nextPageNumber == 1) null else nextPageNumber - 1,
+                nextKey = if (response.isEmpty()) null else nextPageNumber + 1
             )
         } catch (e: Exception) {
-            LoadResult(e)
+            LoadResult.Error(e)
         }
     }
 

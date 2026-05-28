@@ -1,7 +1,9 @@
 package fi.fimurito.mytimer
 
 import android.content.Context
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -10,6 +12,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import fi.fimurito.mytimer.data.AppDatabase
+import fi.fimurito.mytimer.data.TaskPagingSource
 import fi.fimurito.mytimer.data.TaskRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -20,13 +23,15 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 private const val PAGE_SIZE = 4
+
 class MainViewModel: ViewModel() {
     var query = mutableStateOf("")
         private set
 
     fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
         val appContext = context.applicationContext
-        val dbFile = appContext.getDatabasePath(getString(R.string.app_database_name))
+        //val dbFile = appContext.getDatabasePath(getString(R.string.app_database_name))
+        val dbFile = appContext.getDatabasePath(AppConstants.DATABASE_FILENAME)
         return Room.databaseBuilder<AppDatabase>(
             context = appContext,
             name = dbFile.absolutePath
@@ -53,6 +58,10 @@ class MainViewModel: ViewModel() {
     init {
         isUserDataValid()
 
+
+    }
+
+    fun initialize(context: Context) {
         db = getRoomDatabase(getDatabaseBuilder(context))
         repo = TaskRepository(db.taskDao())
     }
@@ -73,7 +82,7 @@ class MainViewModel: ViewModel() {
 
     private fun isUserDataValid() = viewModelScope.launch {
         delay(1000)
-        _valid.update { Random().nextBoolean() }
+        _valid.update { Random.nextBoolean() }
     }
 
     fun trackSplashScreenStarted() {
