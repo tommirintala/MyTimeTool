@@ -44,11 +44,11 @@ import androidx.compose.material3.SearchBarDefaults.InputField
 //import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+//import androidx.compose.ui.text.font.FontWeight
 //import androidx.compose.ui.text.googlefonts.GoogleFont
 //import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
+//import androidx.compose.material3.TextField
 //import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 
 import androidx.compose.runtime.getValue
@@ -94,11 +94,14 @@ import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -109,6 +112,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
@@ -124,6 +128,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 //import androidx.compose.runtime.collectAsState
 //import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -152,8 +157,12 @@ import androidx.room.PrimaryKey
 //import fi.fimurito.mytimer.ui.MainScreen
 import fi.fimurito.mytimer.ui.ProjectStyle
 import fi.fimurito.mytimer.ui.TimerClock
+import kotlinx.coroutines.delay
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
@@ -190,6 +199,7 @@ class MainActivity : ComponentActivity() {
         Log.d(logPrefix, "Loading app")
 
 
+        val viewModel: MainViewModel = MainViewModel()
 
         //db = getRoomDatabase(getDatabaseBuilder(applicationContext))
         //taskHandler = TaskHandler()
@@ -198,7 +208,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyTimerTheme(dynamicColor = false) {
-                NavigationUI()
+                NavigationUI(viewModel)
             }
             /*
             val tasks = mainViewModel.taskPager.collectAsLazyPagingItems()
@@ -313,7 +323,7 @@ val currentItem = TaskHandler()
 //    name = "Medium Phone",
 //    device= "spec:width=412dp,height=915dp,dpi=420",
 //    showSystemUi=true)
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun HomeScreen(/*viewModel: AppSharedViewModel,*/
                modifier: Modifier = Modifier) {
@@ -358,7 +368,8 @@ fun HomeScreen(/*viewModel: AppSharedViewModel,*/
               //  horizontalArrangement = Arrangement.Center) {
                 //Text("Current date/time")
                 TimerClock(
-                    modifier = Modifier.size(340.dp)
+                    modifier = Modifier
+                        .size(340.dp)
                         .padding(20.dp),
 
                     clockStyle = ProjectStyle,
@@ -1369,7 +1380,9 @@ fun PasswordTextField() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationUI() {
+fun NavigationUI(
+    viewModel: MainViewModel
+) {
     val navController = rememberNavController()
     val startDestination = Destination.MAIN
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
@@ -1409,16 +1422,19 @@ fun NavigationUI() {
             }
         }
     ) { innerPadding ->
-        AppNavHost(navController, startDestination, modifier = Modifier.padding(innerPadding))
+        AppNavHost(viewModel, navController, startDestination, modifier = Modifier.padding(innerPadding))
     }
 }
 
 @Composable
 fun AppNavHost(
+    viewModel: MainViewModel,
     navController: NavHostController,
     startDestination: Destination,
     modifier: Modifier = Modifier
 ) {
+
+
     NavHost(
         navController,
         startDestination = startDestination.route,
@@ -1427,27 +1443,38 @@ fun AppNavHost(
         Destination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
-                    Destination.MAIN -> MainScreen()
-                    Destination.TASKS -> TaskScreen()
-                    Destination.SETUP -> SetupScreen()
+                    Destination.MAIN -> MainScreen(viewModel)
+                    Destination.TASKS -> TaskScreen(viewModel)
+                    Destination.SETUP -> SetupScreen(viewModel)
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier) {
     //SimpleDBUITheme {
-    Column(modifier = modifier.fillMaxSize() ) {
-        Greeting(
-            name = "Android"
+    Column(modifier = modifier
+        .width(IntrinsicSize.Max),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TimerClock(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .padding(20.dp, 8.dp),
+            clockStyle = ProjectStyle,
         )
 
         TaskSelector(
             modifier = Modifier
-                .weight(0.8f)
+                .padding(8.dp, 0.dp)
+                .fillMaxWidth(),
+            viewModel = viewModel
         )
         //TaskDetails(
         //    modifier = Modifier
@@ -1456,7 +1483,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(10.dp))
         Row {
             Button(
-                onClick = {},
+                onClick = {
+                    viewModel.autoStopTime = viewModel.autoStopTime.plusMinutes(15)
+                },
                 shape = RectangleShape,
                 modifier = Modifier
                     .padding(2.dp)
@@ -1464,7 +1493,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
             ) { Text("++")
             }
             Button(
-                onClick = {},
+                onClick = {
+                    viewModel.taskRunning = false
+                },
                 shape = RectangleShape,
                 modifier = Modifier
                     .padding(2.dp)
@@ -1472,9 +1503,16 @@ fun MainScreen(modifier: Modifier = Modifier) {
             ) { Text("Complete")
             }
             Button(
-                onClick = {},
+                onClick = {
+                    if (!viewModel.taskRunning) {
+                        viewModel.currentTaskStart = LocalDateTime.now()
+                        viewModel.taskRunning = true
+                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(15)
+                    }
+                },
                 shape = RectangleShape,
-                modifier = Modifier.padding(2.dp)
+                modifier = Modifier
+                    .padding(2.dp)
                     .weight(0.3f)
             ) {
                 Text("Switch")
@@ -1483,24 +1521,58 @@ fun MainScreen(modifier: Modifier = Modifier) {
         }
 
         Spacer(modifier = Modifier.height(10.dp))
+
+        Row {
+            Text("Cumulative hours:")
+            Text("42")
+        }
+        Row {
+            Text("Started:")
+            Text("12:00")
+        }
+
     }
     //}
 }
 
-@Preview(showBackground = true)
+// @Preview(showBackground = true)
 @Composable
-fun SetupScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun SetupScreen(
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier) {
+    //var networkSyncState by remember { mutableStateOf(false)}
+    //var useVAMKServer by remember { mutableStateOf(false)}
+
+    Column(
+        modifier = modifier
+            .width(IntrinsicSize.Max),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Setup")
+        Row {
+            Text("Sync network:", modifier.weight(0.4f))
+            Checkbox(
+                checked = viewModel.syncNetwork,
+                onCheckedChange = { viewModel.syncNetwork = it },
+                modifier = modifier.weight(0.4f))
+        }
+        Row {
+            Text("VAMK Server:", modifier.weight(0.4f))
+            Checkbox(
+                checked = viewModel.useVAMKServer,
+                onCheckedChange = { viewModel.useVAMKServer = it},
+                modifier = modifier.weight(0.4f),
+                enabled = viewModel.syncNetwork,)
+
+        }
     }
 }
 
-@Preview(showBackground = true)
+// @Preview(showBackground = true)
 @Composable
-fun TaskScreen(modifier: Modifier = Modifier) {
+fun TaskScreen(
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -1704,7 +1776,8 @@ data class Elem (
 
 @Composable
 fun TaskSelector(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel
 ) {
     val tasks = listOf<Elem>(
         Elem(1L, "Task #1"),
@@ -1718,11 +1791,41 @@ fun TaskSelector(
     var selectedItem by remember { mutableStateOf(items[0]) }
     var taskRunning by remember { mutableStateOf(false)}
 
+    LaunchedEffect(true) {
+        delay(5000)
+        if (viewModel.taskRunning) {
+            viewModel.currentTaskTime = ChronoUnit.MINUTES.between(
+                LocalDateTime.now(),
+                viewModel.currentTaskStart
+            )
+        }
+    }
+
     // Main Dropdown UI
     Column(modifier) {
         Row {
-            Text(text = "Current task: $selectedItem")
-            Text(text = "Running: " + if (taskRunning) "Yes" else "No")
+            Text(text = "Current task: ${viewModel.currentTask?.title ?: "-- N/A --"}",
+                modifier.weight(0.4f))
+            Text(text = "Running: " + if (viewModel.taskRunning) "Yes" else "No",
+                modifier.weight(0.4f))
+        }
+        Row {
+            Text(text = "Started at:",
+                modifier.weight(0.4f))
+            Text(text = viewModel.currentTaskStart.toString())
+        }
+        Row {
+            Text(text = "Task time (min):",
+                modifier.weight(0.4f))
+            //val diff = ChronoUnit.MINUTES.between(LocalDateTime.now(),viewModel.currentTaskStart)
+            Text(text = viewModel.currentTaskTime.toString(),
+                modifier.weight(0.4f))
+        }
+        Row {
+            Text(text = "Autostop at:",
+                modifier.weight(0.4f))
+            Text(text = viewModel.autoStopTime.toString(),
+                modifier.weight(0.4f))
         }
         OutlinedTextField(
             value = selectedItem,
@@ -1750,6 +1853,10 @@ fun TaskSelector(
                     onClick = {
                         selectedItem = item
                         expanded = false
+                        // -> SAVE!!!
+                        viewModel.currentTaskStart = LocalDateTime.now()
+                        viewModel.taskRunning = true
+                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(15)
                     },
                     text = { Text(text = item) })
             }

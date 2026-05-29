@@ -1,9 +1,9 @@
 package fi.fimurito.mytimer
 
 import android.content.Context
-import androidx.compose.runtime.currentCompositionLocalContext
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.content.ContextCompat.getString
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -14,12 +14,14 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import fi.fimurito.mytimer.data.AppDatabase
 import fi.fimurito.mytimer.data.TaskPagingSource
 import fi.fimurito.mytimer.data.TaskRepository
+import fi.fimurito.mytimer.data.model.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 private const val PAGE_SIZE = 4
@@ -88,4 +90,15 @@ class MainViewModel: ViewModel() {
     fun trackSplashScreenStarted() {
 
     }
+
+    var syncNetwork by mutableStateOf(false)
+    //var useVAMKServer: Boolean = false
+    var useVAMKServer by mutableStateOf(false)
+    var currentTask: Task? = null
+    //var taskRunning: Boolean = false
+    var taskRunning by mutableStateOf(false)
+    //var currentTaskStart: LocalDateTime = LocalDateTime.MIN
+    var currentTaskStart by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
+    var currentTaskTime by mutableStateOf(0L)
+    var autoStopTime by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
 }
