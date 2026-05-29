@@ -2,7 +2,9 @@ package fi.fimurito.mytimer
 
 import android.content.Context
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +28,7 @@ import kotlin.random.Random
 
 private const val PAGE_SIZE = 4
 
-class MainViewModel: ViewModel() {
+class MainViewModel : ViewModel() {
     var query = mutableStateOf("")
         private set
 
@@ -53,15 +55,15 @@ class MainViewModel: ViewModel() {
 
     //private val repo: TaskRepository = TaskRepository()
     private lateinit var repo: TaskRepository
-    private lateinit var paginSource : TaskPagingSource
-    private val _valid : MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    private lateinit var paginSource: TaskPagingSource
+    private val _valid: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val valid: StateFlow<Boolean?> = _valid
 
-    init {
-        isUserDataValid()
+    //init {
+    //  isUserDataValid()
 
 
-    }
+    //}
 
     fun initialize(context: Context) {
         db = getRoomDatabase(getDatabaseBuilder(context))
@@ -92,13 +94,27 @@ class MainViewModel: ViewModel() {
     }
 
     var syncNetwork by mutableStateOf(false)
+
     //var useVAMKServer: Boolean = false
     var useVAMKServer by mutableStateOf(false)
-    var currentTask: Task? = null
+    var currentTask: Long = 0L
+
     //var taskRunning: Boolean = false
     var taskRunning by mutableStateOf(false)
+
     //var currentTaskStart: LocalDateTime = LocalDateTime.MIN
     var currentTaskStart by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
     var currentTaskTime by mutableStateOf(0L)
     var autoStopTime by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
+
+    //var taskList  = remember { mutableListOf(emptyList<Task>()) }
+    //var taskList = mutableListOf(emptyList<Task>())
+    var taskList = mutableMapOf<Long, Task>()
+
+    init {
+        (1L..10L).forEach { item ->
+            taskList[item] = Task(item, title = "Task #${item}")
+        }
+
+    }
 }

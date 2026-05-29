@@ -158,6 +158,7 @@ import androidx.room.PrimaryKey
 import fi.fimurito.mytimer.ui.ProjectStyle
 import fi.fimurito.mytimer.ui.TimerClock
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -1770,7 +1771,7 @@ fun CustomDatePicker(
 
 
 data class Elem (
-    @PrimaryKey val primaryKey: Long,
+    @PrimaryKey val key: Int,
     val title: String
 )
 
@@ -1779,32 +1780,38 @@ fun TaskSelector(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel
 ) {
+    /*
     val tasks = listOf<Elem>(
-        Elem(1L, "Task #1"),
-        Elem(2L, "Task #2"),
-        Elem(42L, "Task #42")
+        Elem(1, "Task #1"),
+        Elem(2, "Task #2"),
+        Elem(42, "Task #42")
     )
     val items = listOf(
         "Task 1", "Task 2", "Task 3"
     )
+    */
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf(items[0]) }
+    // var selectedItem by remember { mutableStateOf(items[0]) }
     var taskRunning by remember { mutableStateOf(false)}
+    val pulseRateMs by remember { mutableStateOf(5000L)}
 
-    LaunchedEffect(true) {
-        delay(5000)
-        if (viewModel.taskRunning) {
-            viewModel.currentTaskTime = ChronoUnit.MINUTES.between(
-                LocalDateTime.now(),
-                viewModel.currentTaskStart
-            )
+    LaunchedEffect(pulseRateMs) {
+        while (isActive) {
+            println("Update view")
+            delay(pulseRateMs)
+            if (viewModel.taskRunning) {
+                viewModel.currentTaskTime = ChronoUnit.MINUTES.between(
+                    viewModel.currentTaskStart,
+                    LocalDateTime.now()
+                )
+            }
         }
     }
 
     // Main Dropdown UI
     Column(modifier) {
         Row {
-            Text(text = "Current task: ${viewModel.currentTask?.title ?: "-- N/A --"}",
+            Text(text = "Current task: ${viewModel.taskList[viewModel.currentTask]?.title ?: "-- N/A --"}",
                 modifier.weight(0.4f))
             Text(text = "Running: " + if (viewModel.taskRunning) "Yes" else "No",
                 modifier.weight(0.4f))
@@ -1828,7 +1835,7 @@ fun TaskSelector(
                 modifier.weight(0.4f))
         }
         OutlinedTextField(
-            value = selectedItem,
+            value = viewModel.taskList[viewModel.currentTask]?.title.toString(),
             onValueChange = {},
             modifier = Modifier.fillMaxWidth(),
             readOnly = true,
@@ -1848,17 +1855,18 @@ fun TaskSelector(
                 expanded = false
             }
         ) {
-            items.forEach { item ->
+            viewModel.taskList.forEach { item ->
                 DropdownMenuItem(
                     onClick = {
-                        selectedItem = item
+                        // selectedItem = item.key
+                        viewModel.currentTask = item.key
                         expanded = false
                         // -> SAVE!!!
                         viewModel.currentTaskStart = LocalDateTime.now()
                         viewModel.taskRunning = true
                         viewModel.autoStopTime = LocalDateTime.now().plusMinutes(15)
                     },
-                    text = { Text(text = item) })
+                    text = { Text(text = item.value.title) })
             }
         }
     }
