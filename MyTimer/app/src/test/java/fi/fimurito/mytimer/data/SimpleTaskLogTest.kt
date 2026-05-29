@@ -53,8 +53,8 @@ class SimpleTaskLogTest {
             tasklist.forEach {
                 val log = TaskLog(
                     taskId = it.getId(),
-                    beginDate = Utils.taskTimer("2012-05-01 18:03"),
-                    endDate = Utils.taskTimer("2012-05-01 19:11"),
+                    beginDate = Utils.getNextTaskTimer("2012-05-01 18:03"),
+                    endDate = Utils.getNextTaskTimer("2012-05-01 19:11"),
                     comment = "Task comment for task #${it.getId()}"
                 )
             }

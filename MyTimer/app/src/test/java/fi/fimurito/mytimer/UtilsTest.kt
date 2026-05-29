@@ -10,7 +10,7 @@ class UtilsTest {
     @Test
     fun testTaskTimer() {
         val n = ZonedDateTime.now()
-        val t = Utils.taskTimer()
+        val t = Utils.getNextTaskTimer()
         val m: Int = n.minute - n.minute % AppConstants.CURRENT_MINUTE_DIVISOR
 
         // Log.d(AppConstants.LOG_TAG, "time: ${t.hour}:${t.minute}:${t.second}")

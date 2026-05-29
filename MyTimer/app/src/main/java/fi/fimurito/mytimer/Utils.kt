@@ -2,8 +2,7 @@ package fi.fimurito.mytimer
 
 import android.util.Log
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+
 //import java.time.LocalDate
 //import java.time.LocalDateTime
 //import java.time.LocalTime
@@ -17,7 +16,7 @@ fun divBy(p1: Int, d1: Int): Int {
 }
 class Utils {
     companion object {
-        fun taskTimer(): LocalDateTime {
+        fun getNextTaskTimer(): LocalDateTime {
             //val now = ZonedDateTime.now(ZoneId.systemDefault())
             val now = LocalDateTime.now()
 
@@ -28,7 +27,7 @@ class Utils {
             return nex
         }
 
-        fun taskTimer(date: String): LocalDateTime? {
+        fun getNextTaskTimer(date: String): LocalDateTime? {
             try {
                 val lt = LocalDateTime.parse(date)
                 val tt = lt
@@ -42,7 +41,7 @@ class Utils {
             return null
         }
 
-        fun taskTimer(st: LocalDateTime): LocalDateTime {
+        fun getNextTaskTimer(st: LocalDateTime): LocalDateTime {
             val lt = st
                 .withMinute(divBy(st.minute, AppConstants.CURRENT_MINUTE_DIVISOR.toInt()))
                 .withSecond(0)

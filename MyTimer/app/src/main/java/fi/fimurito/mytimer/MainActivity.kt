@@ -1485,7 +1485,7 @@ fun MainScreen(
         Row {
             Button(
                 onClick = {
-                    viewModel.autoStopTime = viewModel.autoStopTime.plusMinutes(15)
+                    viewModel.autoStopTime = viewModel.autoStopTime.plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
                 },
                 shape = RectangleShape,
                 modifier = Modifier
@@ -1508,7 +1508,7 @@ fun MainScreen(
                     if (!viewModel.taskRunning) {
                         viewModel.currentTaskStart = LocalDateTime.now()
                         viewModel.taskRunning = true
-                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(15)
+                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
                     }
                 },
                 shape = RectangleShape,
@@ -1864,7 +1864,7 @@ fun TaskSelector(
                         // -> SAVE!!!
                         viewModel.currentTaskStart = LocalDateTime.now()
                         viewModel.taskRunning = true
-                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(15)
+                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
                     },
                     text = { Text(text = item.value.title) })
             }
