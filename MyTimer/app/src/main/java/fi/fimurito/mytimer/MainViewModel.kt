@@ -117,4 +117,7 @@ class MainViewModel : ViewModel() {
         }
 
     }
+
+    var taskRangeBegin by mutableStateOf<Long?>(null)
+    var taskRangeEnd by mutableStateOf<Long?>(null)
 }

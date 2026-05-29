@@ -111,6 +111,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
@@ -160,7 +161,7 @@ import fi.fimurito.mytimer.ui.TimerClock
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import java.time.Instant
-import java.time.LocalDate
+//import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -168,9 +169,9 @@ import java.time.temporal.ChronoUnit
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
 
-    private val mainViewModel by viewModels<MainViewModel>()
-    private val _lastTask = MutableLiveData<Task>()
-    val lastTask: LiveData<Task> = _lastTask
+    //private val mainViewModel by viewModels<MainViewModel>()
+    //private val _lastTask = MutableLiveData<Task>()
+    //val lastTask: LiveData<Task> = _lastTask
 
     /*
     fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
@@ -200,7 +201,7 @@ class MainActivity : ComponentActivity() {
         Log.d(logPrefix, "Loading app")
 
 
-        val viewModel: MainViewModel = MainViewModel()
+        val viewModel = MainViewModel()
 
         //db = getRoomDatabase(getDatabaseBuilder(applicationContext))
         //taskHandler = TaskHandler()
@@ -328,10 +329,10 @@ val currentItem = TaskHandler()
 @Composable
 fun HomeScreen(/*viewModel: AppSharedViewModel,*/
                modifier: Modifier = Modifier) {
-    val taskFieldState = rememberTextFieldState()
-    val items = listOf(
-        "Task 1", "Task 2", "Task 343", "Opetusta"
-    )
+    //val taskFieldState = rememberTextFieldState()
+    //val items = listOf(
+    //    "Task 1", "Task 2", "Task 343", "Opetusta"
+    //)
 
 
 /*
@@ -841,7 +842,8 @@ enum class Destination(
 ) {
     MAIN("main", "Main", Icons.Default.Home, "Main"),
     TASKS("tasks", "Tasks", Icons.Default.Add, "Tasks"),
-    SETUP("setup", "Setup", Icons.Default.Settings, "Settings")
+    SETUP("setup", "Setup", Icons.Default.Settings, "Settings"),
+    SYNC("sync", "Sync", Icons.Default.Refresh, "Sync")
 }
 
 
@@ -1122,7 +1124,7 @@ fun TaskSwitcher() {
 @Composable
 fun TaskFinisherField() {
     var logMessage by rememberSaveable { mutableStateOf("") }
-    var isShown by remember { mutableStateOf(false) }
+    //var isShown by remember { mutableStateOf(false) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
@@ -1447,6 +1449,7 @@ fun AppNavHost(
                     Destination.MAIN -> MainScreen(viewModel)
                     Destination.TASKS -> TaskScreen(viewModel)
                     Destination.SETUP -> SetupScreen(viewModel)
+                    Destination.SYNC -> SyncScreen(viewModel)
                 }
             }
         }
@@ -1505,10 +1508,15 @@ fun MainScreen(
             }
             Button(
                 onClick = {
-                    if (!viewModel.taskRunning) {
-                        viewModel.currentTaskStart = LocalDateTime.now()
-                        viewModel.taskRunning = true
-                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
+                    if (viewModel.currentTask != 0L) {
+                        if (!viewModel.taskRunning) {
+                            viewModel.currentTaskStart = LocalDateTime.now()
+                            viewModel.taskRunning = true
+                            viewModel.autoStopTime = LocalDateTime.now()
+                                .plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
+                        }
+                    } else {
+                        viewModel.taskRunning = false
                     }
                 },
                 shape = RectangleShape,
@@ -1569,6 +1577,40 @@ fun SetupScreen(
     }
 }
 
+@Composable
+fun SyncScreen(
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier) {
+
+
+    Column(
+        modifier = modifier
+            .width(IntrinsicSize.Max),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Sync")
+        Row {
+            Button(onClick = {},
+            ) {
+                Text("Sync")
+            }
+        }
+        /*
+        Row {
+            Text("VAMK Server:", modifier.weight(0.4f))
+            Checkbox(
+                checked = viewModel.useVAMKServer,
+                onCheckedChange = { viewModel.useVAMKServer = it},
+                modifier = modifier.weight(0.4f),
+                enabled = viewModel.syncNetwork,)
+
+        }
+
+         */
+    }
+}
+
+
 // @Preview(showBackground = true)
 @Composable
 fun TaskScreen(
@@ -1579,7 +1621,7 @@ fun TaskScreen(
         contentAlignment = Alignment.Center
     ) {
         Text("Tasks")
-        TaskDetails()
+        TaskDetails(viewModel = viewModel)
     }
 }
 
@@ -1587,6 +1629,7 @@ fun TaskScreen(
 @Composable
 fun TaskDetails(
     modifier: Modifier = Modifier,
+    viewModel: MainViewModel,
     tid: Long = -1,
     title: String = "N/A"
 ) {
@@ -1631,14 +1674,14 @@ fun TaskDetails(
             CustomDatePicker(
                 modifier = Modifier.fillMaxWidth(),
                 onDateSelected = { mBegin = it },
-                onDismiss = {},
+                onDismiss = { mBegin = null},
                 label = "Begin date"
             )
 
             CustomDatePicker(
                 modifier = Modifier.fillMaxWidth(),
                 onDateSelected = { mEnd = it },
-                onDismiss = {},
+                onDismiss = { mEnd = null},
                 label = "End date"
             )
         }
@@ -1792,7 +1835,7 @@ fun TaskSelector(
     */
     var expanded by remember { mutableStateOf(false) }
     // var selectedItem by remember { mutableStateOf(items[0]) }
-    var taskRunning by remember { mutableStateOf(false)}
+    //var taskRunning by remember { mutableStateOf(false)}
     val pulseRateMs by remember { mutableStateOf(5000L)}
 
     LaunchedEffect(pulseRateMs) {
@@ -1804,6 +1847,10 @@ fun TaskSelector(
                     viewModel.currentTaskStart,
                     LocalDateTime.now()
                 )
+                if (LocalDateTime.now() > viewModel.autoStopTime) {
+                    println("Autostop of task")
+                    viewModel.taskRunning = false
+                }
             }
         }
     }
@@ -1814,12 +1861,15 @@ fun TaskSelector(
             Text(text = "Current task: ${viewModel.taskList[viewModel.currentTask]?.title ?: "-- N/A --"}",
                 modifier.weight(0.4f))
             Text(text = "Running: " + if (viewModel.taskRunning) "Yes" else "No",
-                modifier.weight(0.4f))
+                modifier.weight(0.4f)
+                    .background(if (viewModel.taskRunning)  Color.Green else Color.White)
+            )
         }
         Row {
             Text(text = "Started at:",
                 modifier.weight(0.4f))
-            Text(text = viewModel.currentTaskStart.toString())
+            Text(text = viewModel.currentTaskStart.toString(),
+                modifier.weight(0.4f))
         }
         Row {
             Text(text = "Task time (min):",
