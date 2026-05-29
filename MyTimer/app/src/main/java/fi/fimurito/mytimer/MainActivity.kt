@@ -1508,6 +1508,7 @@ fun MainScreen(
             }
             Button(
                 onClick = {
+                    println("Switch button clicked")
                     if (viewModel.currentTask != 0L) {
                         if (!viewModel.taskRunning) {
                             viewModel.currentTaskStart = LocalDateTime.now()
