@@ -24,7 +24,8 @@ private val DarkColorScheme = darkColorScheme(
     secondary = VamkPink,
     onSurface = VamkBlue,
     tertiaryFixed = VamkYellow,
-    primaryContainer = Color.DarkGray,
+    primaryContainer = Color.LightGray,
+    secondaryContainer = Color.DarkGray
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -40,6 +41,7 @@ private val LightColorScheme = lightColorScheme(
     secondaryContainer = Color.LightGray,
     surface = VamkBlue,
     onSurface = VamkOrange,
+    secondaryFixedDim = Color.LightGray
 
     /*
     primary = Purple40,

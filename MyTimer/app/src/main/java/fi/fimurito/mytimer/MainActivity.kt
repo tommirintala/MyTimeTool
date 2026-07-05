@@ -113,6 +113,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -125,6 +126,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.rememberDatePickerState
@@ -146,11 +148,14 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.text.font.FontWeight
 //import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.Format
 import androidx.room.PrimaryKey
+import fi.fimurito.mytimer.ui.AppSettingsFragment
 //import androidx.navigation.NavBackStackEntry
 //import androidx.navigation.NavController
 //import androidx.navigation.NavDestination.Companion.hasRoute
@@ -164,7 +169,10 @@ import java.time.Instant
 //import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
+import kotlin.time.Duration.Companion.milliseconds
 
 const val logPrefix = "MyTimer"
 class MainActivity : ComponentActivity() {
@@ -1396,6 +1404,9 @@ fun NavigationUI(
     val startDestination = Destination.MAIN
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
+    val appTitle = remember { mutableStateOf("") }
+    appTitle.value = if (viewModel.taskState.isTaskRunning) "MyTimer: Running" else "MyTimer"
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -1404,7 +1415,7 @@ fun NavigationUI(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
-                title = { Text("MyTimer") }
+                title = { Text(appTitle.value) }
             )
         },
         floatingActionButton = {},
@@ -1468,18 +1479,24 @@ fun MainScreen(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier) {
     //SimpleDBUITheme {
+
+    val buttonActive = remember { mutableStateOf(false)}
+    buttonActive.value = viewModel.taskState.isTaskRunning
+
+
     Column(modifier = modifier
         .width(IntrinsicSize.Max),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TimerClock(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .padding(20.dp, 8.dp),
-            clockStyle = ProjectStyle,
-        )
-
+        if (false) {
+            TimerClock(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .padding(20.dp, 8.dp),
+                clockStyle = ProjectStyle,
+            )
+        }
         TaskSelector(
             modifier = Modifier
                 .padding(8.dp, 0.dp)
@@ -1494,27 +1511,49 @@ fun MainScreen(
         Row {
             Button(
                 onClick = {
-                    viewModel.autoStopTime = viewModel.autoStopTime.plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
+                    if (viewModel.taskState.isTaskRunning) {
+                        viewModel.incrementTaskAutoEnd()
+                    }
                 },
                 shape = RectangleShape,
                 modifier = Modifier
                     .padding(2.dp)
-                    .weight(0.3f)
+                    .weight(0.3f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.secondaryFixedDim
+                ),
+                enabled = buttonActive.value
             ) { Text("++")
             }
             Button(
                 onClick = {
-                    viewModel.taskRunning = false
+                    viewModel.endCurrentTask()
                 },
                 shape = RectangleShape,
                 modifier = Modifier
                     .padding(2.dp)
-                    .weight(0.3f)
-            ) { Text("Complete")
+                    .weight(0.3f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.secondaryFixedDim
+                ),
+                enabled = buttonActive.value
+            ) {
+                Text("Complete")
             }
             Button(
                 onClick = {
                     println("Switch button clicked")
+                    if (!viewModel.taskState.isTaskRunning &&
+                        viewModel.taskState.taskId != 0L) {
+                        // re-start task
+                        viewModel.startNewTask(viewModel.taskState.taskId, viewModel.taskState.taskTitle)
+                    } else {
+                        // cannot start task
+                    }
+
+                    /*
                     if (viewModel.currentTask != 0L) {
                         if (!viewModel.taskRunning) {
                             viewModel.currentTaskStart = LocalDateTime.now()
@@ -1525,6 +1564,7 @@ fun MainScreen(
                     } else {
                         viewModel.taskRunning = false
                     }
+                     */
                 },
                 shape = RectangleShape,
                 modifier = Modifier
@@ -1559,12 +1599,25 @@ fun SetupScreen(
     //var networkSyncState by remember { mutableStateOf(false)}
     //var useVAMKServer by remember { mutableStateOf(false)}
 
+    /*
+    supportFragmentManager
+        .beginTransaction()
+        .replace(R.id.settings_container, AppSettingsFragment())
+        .commit()
+*/
+
+
+    val syncActive = remember { mutableStateOf(false) }
+    syncActive.value = viewModel.syncNetwork
+
     Column(
         modifier = modifier
             .width(IntrinsicSize.Max),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Setup")
+        Text("Sync Settings",
+            fontWeight = FontWeight(700)
+        )
         Row {
             Text("Sync network:", modifier.weight(0.4f))
             Checkbox(
@@ -1572,14 +1625,39 @@ fun SetupScreen(
                 onCheckedChange = { viewModel.syncNetwork = it },
                 modifier = modifier.weight(0.4f))
         }
+        Row{
+            Text("Sync URL", modifier.weight(0.4f))
+            TextField(
+                value = viewModel.syncURL,
+                onValueChange = {viewModel.syncURL = it},
+                enabled = viewModel.syncNetwork
+            )
+        }
         Row {
             Text("VAMK Server:", modifier.weight(0.4f))
             Checkbox(
                 checked = viewModel.useVAMKServer,
-                onCheckedChange = { viewModel.useVAMKServer = it},
+                onCheckedChange = {
+                    if (it) {
+                        viewModel.syncURL = "http://localhost/mytimer/sync"
+                    }
+                    viewModel.useVAMKServer = it
+                                  },
                 modifier = modifier.weight(0.4f),
                 enabled = viewModel.syncNetwork,)
 
+        }
+        Text("Application Behaviour",
+            fontWeight = FontWeight(700)
+        )
+        Row {
+            Text("Task Increment (minutes)", modifier.weight(0.4f))
+            TextField(
+                value = viewModel.taskIncrementMinutes.absoluteValue.toString(),
+                onValueChange = {
+                    viewModel.taskIncrementMinutes = it.toLong()
+                }
+            )
         }
     }
 }
@@ -1848,51 +1926,70 @@ fun TaskSelector(
     LaunchedEffect(pulseRateMs) {
         while (isActive) {
             println("Update view")
-            delay(pulseRateMs)
-            if (viewModel.taskRunning) {
-                viewModel.currentTaskTime = ChronoUnit.MINUTES.between(
-                    viewModel.currentTaskStart,
+            delay(pulseRateMs.milliseconds)
+            if (viewModel.taskState.isTaskRunning) {
+            //if (viewModel.taskRunning) {
+
+                viewModel.taskState = viewModel.taskState.copy(taskTime = java.time.Duration.between(
+                    viewModel.taskState.taskStartedAt,
                     LocalDateTime.now()
-                )
-                if (LocalDateTime.now() > viewModel.autoStopTime) {
+                ))
+                    //ChronoUnit.MINUTES.between(
+                   // viewModel.currentTaskStart,
+                    //LocalDateTime.now()
+                //)
+                if (LocalDateTime.now() > viewModel.taskState.autoStopTime) {
                     println("Autostop of task")
-                    viewModel.taskRunning = false
+                    //viewModel.taskRunning = false
+                    viewModel.endCurrentTask()
                 }
             }
         }
     }
 
+
+    val defaultTimerFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    val startTime = remember { mutableStateOf("") }
+    startTime.value = viewModel.taskState.taskStartedAt.format(defaultTimerFormat)
+
+    val autoStop = remember { mutableStateOf("") }
+    autoStop.value = viewModel.taskState.autoStopTime.format(defaultTimerFormat)
+
+    val taskTime = remember { mutableStateOf("")}
+    taskTime.value = viewModel.taskState.taskTime.toMinutes().toString()
+
     // Main Dropdown UI
     Column(modifier) {
         Row {
-            Text(text = "Current task: ${viewModel.taskList[viewModel.currentTask]?.title ?: "-- N/A --"}",
+            Text(text = "Current task: ${viewModel.taskList[viewModel.taskState.taskId]?.title ?: "-- N/A --"}",
                 modifier.weight(0.4f))
-            Text(text = "Running: " + if (viewModel.taskRunning) "Yes" else "No",
+            Text(text = "Running: " + if (viewModel.taskState.isTaskRunning) "Yes" else "No",
                 modifier.weight(0.4f)
-                    .background(if (viewModel.taskRunning)  Color.Green else Color.White)
+                    .background(if (viewModel.taskState.isTaskRunning)  Color.Green else Color.White)
             )
         }
         Row {
             Text(text = "Started at:",
                 modifier.weight(0.4f))
-            Text(text = viewModel.currentTaskStart.toString(),
+            Text(text = startTime.value,
                 modifier.weight(0.4f))
         }
+
         Row {
             Text(text = "Task time (min):",
                 modifier.weight(0.4f))
             //val diff = ChronoUnit.MINUTES.between(LocalDateTime.now(),viewModel.currentTaskStart)
-            Text(text = viewModel.currentTaskTime.toString(),
+            Text(text = taskTime.value,
                 modifier.weight(0.4f))
         }
         Row {
             Text(text = "Autostop at:",
                 modifier.weight(0.4f))
-            Text(text = viewModel.autoStopTime.toString(),
+            Text(text = autoStop.value,
                 modifier.weight(0.4f))
         }
         OutlinedTextField(
-            value = viewModel.taskList[viewModel.currentTask]?.title.toString(),
+            value = viewModel.taskList[viewModel.taskState.taskId]?.title.toString(),
             onValueChange = {},
             modifier = Modifier.fillMaxWidth(),
             readOnly = true,
@@ -1915,13 +2012,19 @@ fun TaskSelector(
             viewModel.taskList.forEach { item ->
                 DropdownMenuItem(
                     onClick = {
+                        viewModel.startNewTask(item.key, item.value.title)
                         // selectedItem = item.key
-                        viewModel.currentTask = item.key
+                        //viewModel.taskState = viewModel.taskState.copy(
+                        //    taskId = item.key,
+                        //    taskStartedAt = LocalDateTime.now(),
+                        //    isTaskRunning = true
+                        //)
+                        //viewModel.taskState = item.key
                         expanded = false
                         // -> SAVE!!!
-                        viewModel.currentTaskStart = LocalDateTime.now()
-                        viewModel.taskRunning = true
-                        viewModel.autoStopTime = LocalDateTime.now().plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
+                        //viewModel.currentTaskStart = LocalDateTime.now()
+                        //viewModel.taskRunning = true
+                        // viewModel.autoStopTime = LocalDateTime.now().plusMinutes(AppConstants.DEFAULT_TASK_INCREMENT_LENGTH_MINUTES)
                     },
                     text = { Text(text = item.value.title) })
             }

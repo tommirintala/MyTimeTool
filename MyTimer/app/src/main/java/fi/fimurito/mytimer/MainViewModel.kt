@@ -2,6 +2,7 @@ package fi.fimurito.mytimer
 
 import android.content.Context
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,10 +24,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
 
+
 private const val PAGE_SIZE = 4
+
+data class CurrentTaskState(
+    val taskId: Long = 0L,
+    val taskTitle: String = "",
+    val isTaskRunning: Boolean = false,
+    val errorMessage: String? = null,
+    val taskStartedAt: LocalDateTime = LocalDateTime.now(),
+    val taskTime: java.time.Duration = java.time.Duration.ZERO,
+    val autoStopTime: LocalDateTime = LocalDateTime.now()
+)
 
 class MainViewModel : ViewModel() {
     var query = mutableStateOf("")
@@ -50,6 +63,8 @@ class MainViewModel : ViewModel() {
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
+
+
 
     lateinit var db: AppDatabase
 
@@ -94,18 +109,19 @@ class MainViewModel : ViewModel() {
     }
 
     var syncNetwork by mutableStateOf(false)
+    var syncURL by mutableStateOf("")
 
     //var useVAMKServer: Boolean = false
     var useVAMKServer by mutableStateOf(false)
-    var currentTask: Long = 0L
+    //var currentTask: Long = 0L
 
     //var taskRunning: Boolean = false
-    var taskRunning by mutableStateOf(false)
+    //var taskRunning by mutableStateOf(false)
 
     //var currentTaskStart: LocalDateTime = LocalDateTime.MIN
-    var currentTaskStart by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
-    var currentTaskTime by mutableStateOf(0L)
-    var autoStopTime by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
+    //var currentTaskStart by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
+
+    //var autoStopTime by mutableStateOf<LocalDateTime>(LocalDateTime.MIN)
 
     //var taskList  = remember { mutableListOf(emptyList<Task>()) }
     //var taskList = mutableListOf(emptyList<Task>())
@@ -120,4 +136,68 @@ class MainViewModel : ViewModel() {
 
     var taskRangeBegin by mutableStateOf<Long?>(null)
     var taskRangeEnd by mutableStateOf<Long?>(null)
+
+    var taskState by mutableStateOf(CurrentTaskState())
+    // var currentTaskTime by mutableStateOf(0L)
+    fun startNewTask(id: Long, title: String) {
+        println("MainViewModel: start new task ${id} - ${title}")
+        val now = LocalDateTime.now()
+        taskState = taskState.copy(
+            taskId = id,
+            taskTitle = title,
+            isTaskRunning = true,
+            taskStartedAt = now,
+            autoStopTime = now.plusMinutes(taskIncrementMinutes),
+            taskTime = java.time.Duration.ZERO
+        )
+    }
+
+    fun endCurrentTask() {
+        if (taskState.isTaskRunning) {
+            val duration = java.time.Duration.between(taskState.taskStartedAt, LocalDateTime.now())
+            println("Ending task with id: ${taskState.taskId} started at ${taskState.taskStartedAt}")
+
+            // save ->
+
+            println("Save Event: Duration = ${duration.toMinutes()}")
+            taskState = taskState.copy(
+                isTaskRunning = false,
+                taskStartedAt = LocalDateTime.MIN,
+                taskTime = duration
+            )
+        } else {
+            taskState = taskState.copy(
+                isTaskRunning = false,
+                taskStartedAt = LocalDateTime.MIN
+            )
+        }
+
+    }
+
+    fun incrementTaskAutoEnd() {
+        println("MainViewModel: increment autoEnd value")
+        taskState = taskState.copy(
+            autoStopTime = taskState.autoStopTime.plusMinutes(taskIncrementMinutes)
+        )
+    }
+
+    fun stopCurrentTask() {
+        if (taskState.isTaskRunning) {
+            val duration = java.time.Duration.between(taskState.taskStartedAt, LocalDateTime.now())
+            taskState = taskState.copy(
+                isTaskRunning = false,
+                taskTime = duration
+            )
+        } else {
+            taskState = taskState.copy(
+                isTaskRunning = false
+            )
+        }
+    }
+
+    fun refreshUI() {
+
+    }
+
+    var taskIncrementMinutes by mutableLongStateOf(15L)
 }

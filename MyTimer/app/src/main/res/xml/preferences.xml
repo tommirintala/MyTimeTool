@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <SwitchPreferenceCompat
+        app:key="remote-sync"
+        app:title="Enable remote synchronization"/>
+    <Preference
+        app:key="sync-url"
+        app:title="Remote Sync URL"/>
+    <Preference
+        app:key="sync-auth"
+        app:title="Remote Sync Auth Secret"/>
+
+</PreferenceScreen>
