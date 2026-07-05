@@ -369,6 +369,8 @@ fun HomeScreen(/*viewModel: AppSharedViewModel,*/
             //Row(modifier = Modifier.fillMaxWidth(),
               //  horizontalArrangement = Arrangement.Center) {
                 //Text("Current date/time")
+
+            if (false) {
                 TimerClock(
                     modifier = Modifier
                         .size(340.dp)
@@ -376,6 +378,9 @@ fun HomeScreen(/*viewModel: AppSharedViewModel,*/
 
                     clockStyle = ProjectStyle,
                 )
+            }
+
+
             //}
 
             Row {
@@ -1043,7 +1048,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
@@ -1051,6 +1056,7 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
+*/
 
 @Preview(showBackground=true)
 @Composable
