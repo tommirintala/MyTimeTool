@@ -75,9 +75,9 @@ class AppSharedViewModel(application: Application) : AndroidViewModel(applicatio
         return taskDao.getTasksById(listOf(id))
     }
 
-    fun chooseTask(id: Long): Boolean {
-        return taskHandler.choose(id)
-    }
+    //fun chooseTask(id: Long): Boolean {
+    //    return taskHandler.choose(id)
+    //}
 
     fun saveTask(): Boolean {
         if (taskHandler.isEmpty())

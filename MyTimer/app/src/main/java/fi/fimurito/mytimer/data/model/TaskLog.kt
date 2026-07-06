@@ -12,8 +12,8 @@ import java.time.LocalDateTime
 @Entity(tableName = "tasklogs")
 @TypeConverters(MyTypeConverters::class)
 class TaskLog(
-    @PrimaryKey val id: Long? = null,
-    @ColumnInfo val taskId: Long? = null,
+    @PrimaryKey val id: Int? = null,
+    @ColumnInfo val taskId: Int? = null,
     @ColumnInfo val beginDate: LocalDateTime?,
     @ColumnInfo val endDate: LocalDateTime?,
     @ColumnInfo val comment: String? = null,

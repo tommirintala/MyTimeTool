@@ -47,8 +47,9 @@ class TaskHandler {
         return taskList
     }
 
-    fun choose(id: Long) : Boolean {
+    fun choose(id: Int) : Boolean {
         var found = false
+        /*
         taskList.forEach { item ->
             if (item.getId() == id) {
                 currentTitle = item.title
@@ -59,6 +60,8 @@ class TaskHandler {
                 found = true
             }
         }
+
+         */
 
         return found
     }
@@ -87,7 +90,8 @@ class TaskHandler {
         return currentCode
     }
 
-    fun build(): Task {
+    //fun build(): Task {
+        /*
         val task = Task(
             currentTaskId,
             currentRemoteId,
@@ -97,6 +101,8 @@ class TaskHandler {
             title = currentTitle
         )
 
-        return task
-    }
+
+         */
+        //return task
+    //}
 }

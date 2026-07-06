@@ -3,28 +3,18 @@ package fi.fimurito.mytimer
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import fi.fimurito.mytimer.data.AppDatabase
 import fi.fimurito.mytimer.data.TaskPagingSource
-import fi.fimurito.mytimer.data.TaskRepository
 import fi.fimurito.mytimer.data.model.Task
-import kotlinx.coroutines.Dispatchers
+import fi.fimurito.mytimer.data.model.TaskLog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
 
@@ -32,7 +22,7 @@ import kotlin.random.Random
 private const val PAGE_SIZE = 4
 
 data class CurrentTaskState(
-    val taskId: Long = 0L,
+    val taskId: Int = 0,
     val taskTitle: String = "",
     val isTaskRunning: Boolean = false,
     val errorMessage: String? = null,
@@ -41,35 +31,26 @@ data class CurrentTaskState(
     val autoStopTime: LocalDateTime = LocalDateTime.now()
 )
 
-class MainViewModel : ViewModel() {
+class MainViewModel() : ViewModel() {
+
+    var context by mutableStateOf<Context?>(null)
+
     var query = mutableStateOf("")
         private set
 
-    fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
-        val appContext = context.applicationContext
-        //val dbFile = appContext.getDatabasePath(getString(R.string.app_database_name))
-        val dbFile = appContext.getDatabasePath(AppConstants.DATABASE_FILENAME)
-        return Room.databaseBuilder<AppDatabase>(
-            context = appContext,
-            name = dbFile.absolutePath
-        )
-    }
+    //val repo = db.taskDao()
+    //val logrepo = db.taskLogDao()
 
-    fun getRoomDatabase(
-        builder: RoomDatabase.Builder<AppDatabase>
-    ): AppDatabase {
-        return builder
-            .setDriver(BundledSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
-            .build()
-    }
+    //var repo =  mutableStateOf<TaskDao>()
+    //var logrepo =  mutableStateOf<TaskLogDao>()
 
+    //val db = mutableStateOf<AppDatabase>(null)
 
-
-    lateinit var db: AppDatabase
+    //lateinit var db: AppDatabase
 
     //private val repo: TaskRepository = TaskRepository()
-    private lateinit var repo: TaskRepository
+    //private lateinit var repo: TaskRepository
+    //private lateinit var logrepo: TaskLogRepository
     private lateinit var paginSource: TaskPagingSource
     private val _valid: MutableStateFlow<Boolean?> = MutableStateFlow(null)
     val valid: StateFlow<Boolean?> = _valid
@@ -80,11 +61,13 @@ class MainViewModel : ViewModel() {
 
     //}
 
-    fun initialize(context: Context) {
-        db = getRoomDatabase(getDatabaseBuilder(context))
-        repo = TaskRepository(db.taskDao())
-    }
+    //fun initialize(context: Context) {
+    //    db = getRoomDatabase(getDatabaseBuilder(context))
+    //    repo = TaskRepository(db.taskDao())
+    //    logrepo = TaskLogRepository(db.taskLogDao())
+    //}
 
+    /*
     val taskPager = Pager(PagingConfig(pageSize = PAGE_SIZE)) {
         TaskPagingSource(query.value, repo).also {
             paginSource = it
@@ -98,7 +81,7 @@ class MainViewModel : ViewModel() {
     fun invalidateDataSource() {
         paginSource.invalidate()
     }
-
+*/
     private fun isUserDataValid() = viewModelScope.launch {
         delay(1000)
         _valid.update { Random.nextBoolean() }
@@ -125,12 +108,14 @@ class MainViewModel : ViewModel() {
 
     //var taskList  = remember { mutableListOf(emptyList<Task>()) }
     //var taskList = mutableListOf(emptyList<Task>())
-    var taskList = mutableMapOf<Long, Task>()
+    //var taskList = mutableMapOf<Long, Task>()
+    var taskList = mutableMapOf<Int, Task>()
 
     init {
-        (1L..10L).forEach { item ->
-            taskList[item] = Task(item, title = "Task #${item}")
-        }
+
+        //(1L..10L).forEach { item ->
+        //    taskList[item] = Task(item, title = "Task #${item}")
+        //}
 
     }
 
@@ -139,7 +124,7 @@ class MainViewModel : ViewModel() {
 
     var taskState by mutableStateOf(CurrentTaskState())
     // var currentTaskTime by mutableStateOf(0L)
-    fun startNewTask(id: Long, title: String) {
+    fun startNewTask(id: Int, title: String) {
         println("MainViewModel: start new task ${id} - ${title}")
         val now = LocalDateTime.now()
         taskState = taskState.copy(
@@ -152,10 +137,16 @@ class MainViewModel : ViewModel() {
         )
     }
 
-    fun endCurrentTask() {
+    fun endCurrentTask() : TaskLog? {
         if (taskState.isTaskRunning) {
+            val taskId = taskState.taskId
+            val startTime = taskState.taskStartedAt
+            val endTime = LocalDateTime.now()
+            val comment = "n/a"
+
             val duration = java.time.Duration.between(taskState.taskStartedAt, LocalDateTime.now())
             println("Ending task with id: ${taskState.taskId} started at ${taskState.taskStartedAt}")
+            println("Current time is ${LocalDateTime.now()}, duration=${duration}")
 
             // save ->
 
@@ -165,13 +156,26 @@ class MainViewModel : ViewModel() {
                 taskStartedAt = LocalDateTime.MIN,
                 taskTime = duration
             )
+
+            //viewModelScope.launch {
+            //    logrepo.insertAll(
+            return                     TaskLog(
+                    taskId = taskId,
+                    beginDate =  startTime,
+                    endDate =  endTime,
+                    comment = comment
+                    )
+              //  )
+            //}
+
+
         } else {
             taskState = taskState.copy(
                 isTaskRunning = false,
                 taskStartedAt = LocalDateTime.MIN
             )
         }
-
+    return null
     }
 
     fun incrementTaskAutoEnd() {

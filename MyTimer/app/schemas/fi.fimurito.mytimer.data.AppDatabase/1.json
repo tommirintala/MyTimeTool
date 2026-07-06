@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fcef4e49cbe27d249a7130d680ae2af4",
+    "identityHash": "d0cc8d6928a43b3f18890325b713c0c6",
     "entities": [
       {
         "tableName": "tasklogs",
@@ -55,12 +55,13 @@
       },
       {
         "tableName": "tasks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `remoteId` INTEGER NOT NULL, `title` TEXT NOT NULL, `etags` TEXT NOT NULL, `code` TEXT NOT NULL, `abbr` TEXT NOT NULL, `max_hours` REAL NOT NULL, `set_hours` REAL NOT NULL, `task_type` TEXT NOT NULL, `created_at` INTEGER NOT NULL, `modified_at` INTEGER NOT NULL, `beginTime` INTEGER, `endTime` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `remoteId` INTEGER NOT NULL, `title` TEXT NOT NULL, `etags` TEXT NOT NULL, `code` TEXT NOT NULL, `abbr` TEXT NOT NULL, `max_hours` REAL NOT NULL, `set_hours` REAL NOT NULL, `task_type` INTEGER NOT NULL, `validFrom` INTEGER, `validUntil` INTEGER, `lastSync` INTEGER, `created_at` INTEGER NOT NULL, `modified_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER"
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "remoteId",
@@ -107,8 +108,23 @@
           {
             "fieldPath": "taskType",
             "columnName": "task_type",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "validFrom",
+            "columnName": "validFrom",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "validUntil",
+            "columnName": "validUntil",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastSync",
+            "columnName": "lastSync",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "creationTime",
@@ -121,16 +137,6 @@
             "columnName": "modified_at",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "beginTime",
-            "columnName": "beginTime",
-            "affinity": "INTEGER"
-          },
-          {
-            "fieldPath": "endTime",
-            "columnName": "endTime",
-            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -143,7 +149,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fcef4e49cbe27d249a7130d680ae2af4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd0cc8d6928a43b3f18890325b713c0c6')"
     ]
   }
 }

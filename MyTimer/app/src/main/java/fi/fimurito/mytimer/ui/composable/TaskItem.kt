@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +28,8 @@ fun TaskItem(
                 .fillMaxHeight()
                 .weight(0.2f)
         ) {
-            Icon(imageVector = task.taskType.icon, contentDescription = "Task icon")
+            //Icon(imageVector = task.taskType.icon, contentDescription = "Task icon")
+            Text("Icon here")
         }
     }
 }

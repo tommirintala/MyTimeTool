@@ -4,11 +4,9 @@ package fi.fimurito.mytimer
 //import android.os.Build
 import android.os.Bundle
 import android.util.Log
-//import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 //import androidx.annotation.RequiresApi
 
 
@@ -27,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -69,8 +66,6 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 //import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -78,7 +73,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import fi.fimurito.mytimer.data.model.Task
 import fi.fimurito.mytimer.ui.theme.MyTimerTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -148,14 +142,13 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.DrawModifierNode
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 //import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 
 import androidx.compose.ui.unit.sp
-import androidx.media3.common.Format
 import androidx.room.PrimaryKey
-import fi.fimurito.mytimer.ui.AppSettingsFragment
 //import androidx.navigation.NavBackStackEntry
 //import androidx.navigation.NavController
 //import androidx.navigation.NavDestination.Companion.hasRoute
@@ -170,7 +163,6 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -203,6 +195,36 @@ class MainActivity : ComponentActivity() {
     lateinit var db: AppDatabase
 */
 
+/*
+    fun getDatabaseBuilder(context: Context): RoomDatabase.Builder<AppDatabase> {
+        val appContext = context.applicationContext
+        //val dbFile = appContext.getDatabasePath(getString(R.string.app_database_name))
+        val dbFile = appContext.getDatabasePath(AppConstants.DATABASE_FILENAME)
+        return Room.databaseBuilder<AppDatabase>(
+            context = appContext,
+            name = dbFile.absolutePath
+        )
+    }
+
+    fun getRoomDatabase(
+        builder: RoomDatabase.Builder<AppDatabase>
+    ): AppDatabase {
+        return builder
+            .setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
+            .build()
+    }
+
+ */
+
+/*
+    val db = Room.databaseBuilder(
+        applicationContext,
+        AppDatabase::class.java,
+        AppConstants.DATABASE_FILENAME
+    ).build()
+*/
+    // val db = getRoomDatabase(getDatabaseBuilder(applicationContext))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -210,6 +232,14 @@ class MainActivity : ComponentActivity() {
 
 
         val viewModel = MainViewModel()
+
+
+
+        //val db = viewModel.getRoomDatabase(viewModel.getDatabaseBuilder(applicationContext))
+        //viewModel.repo = TaskRepository(db.taskDao())
+        //viewModel.logrepo = TaskLogRepository(db.taskLogDao())
+
+        //viewModel.initialize(applicationContext)
 
         //db = getRoomDatabase(getDatabaseBuilder(applicationContext))
         //taskHandler = TaskHandler()
@@ -1407,6 +1437,8 @@ fun NavigationUI(
     val appTitle = remember { mutableStateOf("") }
     appTitle.value = if (viewModel.taskState.isTaskRunning) "MyTimer: Running" else "MyTimer"
 
+    viewModel.context = LocalContext.current
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -1483,6 +1515,11 @@ fun MainScreen(
     val buttonActive = remember { mutableStateOf(false)}
     buttonActive.value = viewModel.taskState.isTaskRunning
 
+    val dbHandler: DBHandler = DBHandler(viewModel.context)
+    val tasks = dbHandler.getTasks()
+    tasks.forEach { task ->
+        viewModel.taskList[task.getId()] = task
+    }
 
     Column(modifier = modifier
         .width(IntrinsicSize.Max),
@@ -1528,7 +1565,8 @@ fun MainScreen(
             }
             Button(
                 onClick = {
-                    viewModel.endCurrentTask()
+                    val t = viewModel.endCurrentTask()
+                    dbHandler.addLog(t)
                 },
                 shape = RectangleShape,
                 modifier = Modifier
@@ -1546,7 +1584,7 @@ fun MainScreen(
                 onClick = {
                     println("Switch button clicked")
                     if (!viewModel.taskState.isTaskRunning &&
-                        viewModel.taskState.taskId != 0L) {
+                        viewModel.taskState.taskId != 0) {
                         // re-start task
                         viewModel.startNewTask(viewModel.taskState.taskId, viewModel.taskState.taskTitle)
                     } else {
@@ -1961,7 +1999,7 @@ fun TaskSelector(
     // Main Dropdown UI
     Column(modifier) {
         Row {
-            Text(text = "Current task: ${viewModel.taskList[viewModel.taskState.taskId]?.title ?: "-- N/A --"}",
+            Text(text = "Current task: ${viewModel.taskState.taskTitle ?: "-- N/A --"}",
                 modifier.weight(0.4f))
             Text(text = "Running: " + if (viewModel.taskState.isTaskRunning) "Yes" else "No",
                 modifier.weight(0.4f)

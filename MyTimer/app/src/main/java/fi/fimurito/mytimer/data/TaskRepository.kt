@@ -1,7 +1,6 @@
 package fi.fimurito.mytimer.data
 
 import fi.fimurito.mytimer.data.model.Task
-import fi.fimurito.mytimer.data.model.TaskType
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 // import java.util.Date
@@ -12,6 +11,7 @@ class TaskRepository(private val dao: TaskDao) {
                            abbreviation: String,
                            cTime: LocalDateTime, mTime: LocalDateTime
     ) {
+        /*
         dao.insertAll(
             Task(
                 id = null,
@@ -25,6 +25,8 @@ class TaskRepository(private val dao: TaskDao) {
                 endTime = null,
             )
         )
+
+         */
     }
 
     suspend fun getLastTask(): Task {
@@ -37,16 +39,20 @@ class TaskRepository(private val dao: TaskDao) {
 
     fun getTasks(query: String, nextPageNumber: Int, loadSize: Int): List<Task> {
         return listOf(
+            /*
             Task(
                 1L, 0L, "task",
                 "", "T1", "Test task 1", 10f,
                 setHours = 0f,
-                taskType = TaskType.TASKTYPE_SINGLETASK
+                //taskType = TaskType.TASKTYPE_SINGLETASK
             ),
             Task(2L, -1L, "",
                 "", "", "Test Course", 40f,
                 setHours = 0f,
-                taskType = TaskType.TASKTYPE_COURSE)
+                //taskType = TaskType.TASKTYPE_COURSE
+                )
+
+             */
         )
     }
 }

@@ -7,16 +7,21 @@ import java.util.Date
 
 class TaskLogRepository(private val dao: TaskLogDao) {
     suspend fun addNewTaskLog(
-        tId: Long, bTime: LocalDateTime, eTime: LocalDateTime,
+        tId: Long,
+        bTime: LocalDateTime,
+        eTime: LocalDateTime,
         logComment: String
     ) {
         dao.insertAll(
+            /*
             TaskLog(
                 taskId = tId,
                 beginDate = bTime,
                 endDate = eTime,
                 comment = logComment
             )
+
+             */
         )
     }
 
@@ -24,7 +29,18 @@ class TaskLogRepository(private val dao: TaskLogDao) {
     //    return dao.getLastTaskR()
     //}
 
-    suspend fun commitTaskEntry(taskIdNum: Long, startTime: LocalDateTime, endTime: LocalDateTime, taskComment: String) {
+    suspend fun commentTaskEntry(taskEntry: Long, taskIdNum: Long, taskComment: String) {
+        /*
+        updateTaskLog(
+            TaskLog(
+                id = taskEntry,
+                taskId = taskIdNum,
+                comment = taskComment
+            )
+        )
+
+         */
+        /*
         dao.insertAll(
             TaskLog(
                 taskId = taskIdNum,
@@ -34,6 +50,7 @@ class TaskLogRepository(private val dao: TaskLogDao) {
                 modificationTime = LocalDateTime.now()
             )
         )
+         */
     }
 
     suspend fun updateTaskLog(record: TaskLog) {
